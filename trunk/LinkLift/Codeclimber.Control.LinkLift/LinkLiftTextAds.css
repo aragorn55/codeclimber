@@ -1,0 +1,28 @@
+
+ul.linklift 
+{
+	margin-right:2px;
+	padding:2px;
+	margin-top:2px;
+	margin-bottom:2px;
+	width:100%;
+	overflow:hidden;
+	list-style:none;
+	border:1px solid #00704A;
+	border-spacing:0px;
+}
+
+ul.linklift li
+{
+	width: 48%;
+	display:inline;
+	float:left;
+	clear:none;
+	padding:1px;
+}
+
+ul.linklift a
+{
+	line-height:140%;
+	font-size:12px;
+}
