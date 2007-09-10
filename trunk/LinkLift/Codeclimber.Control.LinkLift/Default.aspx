@@ -14,7 +14,7 @@
 	Domain="www.linklift.de"
 	FileName="~/LL_496fId26b30.xml"
 	Adspace="69d64bf23I0"
-	CheckAfter="1" />
+	CheckAfter="5" />
     </div>
     </form>
 </body>

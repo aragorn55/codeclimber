@@ -35,6 +35,6 @@ namespace CodeClimber.Controls.Linklift {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::Linklift.LinkLixtTextAds ll;
+        protected global::CodeClimber.Controls.Linklift.LinkLixtTextAds ll;
     }
 }

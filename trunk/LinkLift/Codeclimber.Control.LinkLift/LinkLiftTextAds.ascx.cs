@@ -23,6 +23,11 @@ namespace CodeClimber.Controls.Linklift
 		private const string ADSEXPIRATION = "ADS-EXPIRATION";
 		
 		private int _recheck = 1*60*24;
+
+        /// <summary>
+        /// Number of minutes to keep a local version of the XML file.
+        /// Default to 1 day.
+        /// </summary>
 		public int CheckAfter
 		{
 			get { return _recheck; }
@@ -33,14 +38,22 @@ namespace CodeClimber.Controls.Linklift
 
 		private int _webRequestTimeout = 7000;
 
+        /// <summary>
+        /// Timeout for the request to the remote server (in milliseconds).
+        /// Default value 7 seconds.
+        /// </summary>
 		public int WebRequestTimeout
 		{
 			get { return _webRequestTimeout; }
 			set { _webRequestTimeout = value; }
 		}
 
-		private string _domain;
+        private string _domain = "www.linklift.de";
 
+        /// <summary>
+        /// Domain of the LinkLift server.
+        /// Default value is www.linklift.de.
+        /// </summary>
 		public string Domain
 		{
 			get { return _domain; }
@@ -49,6 +62,9 @@ namespace CodeClimber.Controls.Linklift
 
 		private string _fileName;
 
+        /// <summary>
+        /// Path of the local cache of the Ad definition file.
+        /// </summary>
 		public string FileName
 		{
 			get { return _fileName; }
@@ -57,13 +73,17 @@ namespace CodeClimber.Controls.Linklift
 
 		private string _adspace;
 
+        /// <summary>
+        /// Unique Identifier of the Advertiser.
+        /// (The one provided by LinkLift)
+        /// </summary>
 		public string Adspace
 		{
 			get { return _adspace; }
 			set { _adspace = value; }
 		}
 
-		public string FullPath
+		private string FullPath
 		{
 			get { return Server.MapPath(VirtualPathUtility.ToAbsolute(_fileName)); }
 		}
@@ -71,7 +91,18 @@ namespace CodeClimber.Controls.Linklift
 
 		protected void Page_Load(object sender, EventArgs e)
 		{
-			Ads adsConfig = GetAds();
+		    Ads adsConfig;
+            if(String.IsNullOrEmpty(FileName))
+            {
+                adsConfig = new Ads();
+                adsConfig.adspace = new TextLink[1];
+                adsConfig.adspace[0] = new TextLink();
+                adsConfig.adspace[0].text = "FileName is missing";
+                adsConfig.adspace[0].prefix = "Error:";
+                adsConfig.adspace[0].url = "#";
+            }
+		    else
+                adsConfig = GetAds();
 			if (adsConfig != null && adsConfig.adspace.Length > 0)
 			{
 				links.DataSource = adsConfig.adspace;
@@ -129,8 +160,8 @@ namespace CodeClimber.Controls.Linklift
 				FileInfo info = new FileInfo(FullPath);
 				if (info.Exists)
 				{
-					retVal = info.CreationTime.AddMinutes(_recheck);
-					Cache.Insert(ADSEXPIRATION, retVal, new System.Web.Caching.CacheDependency(FullPath));
+					retVal = info.LastWriteTime.AddMinutes(_recheck);
+					Cache.Insert(ADSEXPIRATION, retVal, new System.Web.Caching.CacheDependency(FullPath),retVal,System.Web.Caching.Cache.NoSlidingExpiration);
 				}
 				else
 					retVal = DateTime.MinValue;
