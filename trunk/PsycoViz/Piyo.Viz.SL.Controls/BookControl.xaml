@@ -1,0 +1,14 @@
+﻿<!--
+// Copyright © Piyosailing.com 2008.
+// This source is subject to the Microsoft Public License (Ms-PL).
+// See the included License.txt file.
+// All other rights reserved.
+-->
+
+<Canvas xmlns="http://schemas.microsoft.com/client/2007" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        Width="6"
+        Height="7"
+        >
+<Path x:Name="rect" StrokeThickness="1.000000" Stroke="#ff000000" StrokeMiterLimit="1.000000" Fill="#ffbe0000" Data="F1 M 5.499512,6.500000 L 0.500000,6.500000 L 0.500000,0.500000 L 5.499512,0.500000 L 5.499512,6.500000 Z"/>
+</Canvas>

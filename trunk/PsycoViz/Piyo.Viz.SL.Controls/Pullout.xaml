@@ -1,0 +1,32 @@
+﻿<!--
+// Copyright © Piyosailing.com 2008.
+// This source is subject to the Microsoft Public License (Ms-PL).
+// See the included License.txt file.
+// All other rights reserved.
+-->
+
+<Canvas xmlns="http://schemas.microsoft.com/client/2007" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        Width="100"
+        Height="50"
+        >
+
+    <Canvas.Resources>
+        <Storyboard x:Name="opacityAnim">
+            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="rect" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:00.5" Value="0.7"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Name="opacityAnimTxt">
+            <DoubleAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetName="tb" Storyboard.TargetProperty="(UIElement.Opacity)">
+                <SplineDoubleKeyFrame KeyTime="00:00:00" Value="0"/>
+                <SplineDoubleKeyFrame KeyTime="00:00:00.5" Value="1"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Canvas.Resources>
+    
+    <Rectangle Fill="#cccccc" x:Name="rect" RadiusX="8" RadiusY="8" StrokeThickness="2" Stroke="#FF000000">
+    </Rectangle>
+    <TextBlock x:Name="tb"></TextBlock>
+</Canvas>

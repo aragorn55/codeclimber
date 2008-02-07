@@ -1,0 +1,105 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4006D422-63A3-42A5-80D0-2219705484BF}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Piyo.PsycoViz</RootNamespace>
+    <AssemblyName>Piyo.PsycoViz</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>ClientBin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>ClientBin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="agclr" />
+    <Reference Include="mscorlib" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="system.Xml.core" />
+    <Reference Include="system.silverlight" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonInfo.cs">
+      <Link>CommonInfo.cs</Link>
+    </Compile>
+    <Compile Include="Page.xaml.cs">
+      <DependentUpon>Page.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimeLineHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Silverlight.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Piyo.Viz.SL.Controls\Piyo.Viz.SL.Controls.csproj">
+      <Project>{75DB7656-DCFA-46F3-84C7-9B0E7AC58DCC}</Project>
+      <Name>Piyo.Viz.SL.Controls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Piyo.Viz.SL.Entities\Piyo.Viz.SL.Entities.csproj">
+      <Project>{050935FE-95B7-4EE2-AB98-C1278660DB72}</Project>
+      <Name>Piyo.Viz.SL.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Piyo.Viz.SL.Repository\Piyo.Viz.SL.Repository.csproj">
+      <Project>{1510DAEB-900D-4FF0-83ED-22D6B484B810}</Project>
+      <Name>Piyo.Viz.SL.Repository</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SilverlightPage Include="Page.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </SilverlightPage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="images\arrow-first.png" />
+    <Content Include="images\arrow-last.png" />
+    <Content Include="images\arrow-next.png" />
+    <Content Include="images\arrow-previous.png" />
+    <Content Include="images\Fullscreen.png" />
+    <Content Include="images\zoomin.png" />
+    <Content Include="images\zoomout.png" />
+    <Content Include="mousewheel.js" />
+    <Content Include="PsycoViz.html" />
+    <Content Include="PsycoViz.html.js">
+      <DependentUpon>PsycoViz.html</DependentUpon>
+    </Content>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\Silverlight\Microsoft.Silverlight.Csharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <WebProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

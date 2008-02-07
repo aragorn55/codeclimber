@@ -1,0 +1,31 @@
+﻿<!--
+// Copyright © Piyosailing.com 2008.
+// This source is subject to the Microsoft Public License (Ms-PL).
+// See the included License.txt file.
+// All other rights reserved.
+-->
+
+
+<Canvas x:Name="parentCanvas"
+        xmlns="http://schemas.microsoft.com/client/2007"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:Piyo.Viz.SL.Controls;assembly=ClientBin/Piyo.Viz.SL.Controls.dll"
+        Loaded="Page_Loaded"
+        x:Class="Piyo.PsycoViz.Page;assembly=ClientBin/Piyo.PsycoViz.dll"
+                Width="830"
+        Height="480"
+        Background="White"
+        >
+
+    <Controls:TimeLineGrid x:Name="grid" Width="800" Height="480" Canvas.Left="25"></Controls:TimeLineGrid>
+
+    <Canvas x:Name="buttons" >
+        <Image x:Name="fullScreen" Source="images/fullscreen.png"> </Image>
+        <Image x:Name="zoomin" Source="images/zoomin.png" Canvas.Top="24"> </Image>
+        <Image x:Name="zoomout" Source="images/zoomout.png" Canvas.Top="48"> </Image>
+        <Image x:Name="first" Source="images/arrow-first.png" Canvas.Top="72"> </Image>
+        <Image x:Name="prev" Source="images/arrow-previous.png" Canvas.Top="96"> </Image>
+        <Image x:Name="next" Source="images/arrow-next.png" Canvas.Top="120"> </Image>
+        <Image x:Name="last" Source="images/arrow-last.png" Canvas.Top="144"> </Image>
+    </Canvas>
+</Canvas>

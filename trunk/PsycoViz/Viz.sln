@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piyo.PsycoViz", "Piyo.PsycoViz\Piyo.PsycoViz.csproj", "{4006D422-63A3-42A5-80D0-2219705484BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piyo.Viz.SL.Entities", "Piyo.Viz.SL.Entities\Piyo.Viz.SL.Entities.csproj", "{050935FE-95B7-4EE2-AB98-C1278660DB72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piyo.Viz.SL.Repository", "Piyo.Viz.SL.Repository\Piyo.Viz.SL.Repository.csproj", "{1510DAEB-900D-4FF0-83ED-22D6B484B810}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piyo.Viz.SL.Controls", "Piyo.Viz.SL.Controls\Piyo.Viz.SL.Controls.csproj", "{75DB7656-DCFA-46F3-84C7-9B0E7AC58DCC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docs", "Docs", "{763FEE19-E587-4355-98F9-C784B520F3E4}"
+	ProjectSection(SolutionItems) = preProject
+		License.txt = License.txt
+		PsycoViz.doc = PsycoViz.doc
+		ReadMe.txt = ReadMe.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Commons", "Commons", "{19A4E21C-4519-4E22-BD9D-130F201FE233}"
+	ProjectSection(SolutionItems) = preProject
+		CommonInfo.cs = CommonInfo.cs
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4006D422-63A3-42A5-80D0-2219705484BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4006D422-63A3-42A5-80D0-2219705484BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4006D422-63A3-42A5-80D0-2219705484BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4006D422-63A3-42A5-80D0-2219705484BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{050935FE-95B7-4EE2-AB98-C1278660DB72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{050935FE-95B7-4EE2-AB98-C1278660DB72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{050935FE-95B7-4EE2-AB98-C1278660DB72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{050935FE-95B7-4EE2-AB98-C1278660DB72}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1510DAEB-900D-4FF0-83ED-22D6B484B810}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1510DAEB-900D-4FF0-83ED-22D6B484B810}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1510DAEB-900D-4FF0-83ED-22D6B484B810}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1510DAEB-900D-4FF0-83ED-22D6B484B810}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75DB7656-DCFA-46F3-84C7-9B0E7AC58DCC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75DB7656-DCFA-46F3-84C7-9B0E7AC58DCC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75DB7656-DCFA-46F3-84C7-9B0E7AC58DCC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75DB7656-DCFA-46F3-84C7-9B0E7AC58DCC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

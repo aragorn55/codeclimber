@@ -1,0 +1,122 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{75DB7656-DCFA-46F3-84C7-9B0E7AC58DCC}</ProjectGuid>
+    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Piyo.Viz.SL.Controls</RootNamespace>
+    <AssemblyName>Piyo.Viz.SL.Controls</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>ClientBin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>ClientBin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="agclr" />
+    <Reference Include="mscorlib" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="system.Xml.core" />
+    <Reference Include="system.silverlight" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonInfo.cs">
+      <Link>CommonInfo.cs</Link>
+    </Compile>
+    <Compile Include="BaseControl.cs" />
+    <Compile Include="BookControl.xaml.cs">
+      <DependentUpon>BookControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="BoxWithText.xaml.cs">
+      <DependentUpon>BoxWithText.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ConceptControl.xaml.cs">
+      <DependentUpon>ConceptControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="EntityControl.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Pullout.xaml.cs">
+      <DependentUpon>Pullout.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SeminarControl.xaml.cs">
+      <DependentUpon>SeminarControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="TimeLineGrid.xaml.cs">
+      <DependentUpon>TimeLineGrid.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BookControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ConceptControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SeminarControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Pullout.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="TimeLineGrid.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Piyo.Viz.SL.Entities\Piyo.Viz.SL.Entities.csproj">
+      <Project>{050935FE-95B7-4EE2-AB98-C1278660DB72}</Project>
+      <Name>Piyo.Viz.SL.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BoxWithText.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v9.0\Silverlight\Microsoft.Silverlight.Csharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
+        <WebProjectProperties />
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>
