@@ -1,0 +1,10 @@
+1 - Copy the 2 dll files in the bin folder under Community Server install dir
+
+2 - Add the following configuration key inside communityserver.config, at the bottom of the <CSModules> section.
+
+
+<add name = "CommunityCreditPointSubmission" type = "CommunityCredit.CommunityServer2007.SubmissionAddOn.CommunityCreditPointSubmission, CommunityCredit.CommunityServer2007.SubmissionAddOn">			
+	<AffiliateKey Value="[YourKeyHere]"/>
+	<AffiliateCode Value="[YourCodeHere]"/>
+	<Trace Value="true"/>
+</add>
