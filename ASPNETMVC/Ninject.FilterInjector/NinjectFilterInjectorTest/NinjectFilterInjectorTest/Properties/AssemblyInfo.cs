@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("NinjectFilterInjectorTest")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Avanade")]
+[assembly: AssemblyCompany("Codeclimber")]
 [assembly: AssemblyProduct("NinjectFilterInjectorTest")]
-[assembly: AssemblyCopyright("Copyright © Avanade 2009")]
+[assembly: AssemblyCopyright("Copyright © Codeclimber 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
