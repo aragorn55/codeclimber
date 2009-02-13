@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NinjectFilterInjectorTest", "NinjectFilterInjectorTest\NinjectFilterInjectorTest.csproj", "{CD3680B1-9140-45B9-98E5-07294895EFF0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{66CD7FC4-AA35-47B0-8956-9576327F011D}"
+	ProjectSection(SolutionItems) = preProject
+		Dependencies\Codeclimber.Ninject.FilterInjector.dll = Dependencies\Codeclimber.Ninject.FilterInjector.dll
+		Dependencies\Ninject.Conditions.dll = Dependencies\Ninject.Conditions.dll
+		Dependencies\Ninject.Conditions.xml = Dependencies\Ninject.Conditions.xml
+		Dependencies\Ninject.Core.dll = Dependencies\Ninject.Core.dll
+		Dependencies\Ninject.Core.xml = Dependencies\Ninject.Core.xml
+		Dependencies\Ninject.Framework.Mvc.dll = Dependencies\Ninject.Framework.Mvc.dll
+		Dependencies\Ninject.Framework.Mvc.xml = Dependencies\Ninject.Framework.Mvc.xml
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD3680B1-9140-45B9-98E5-07294895EFF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD3680B1-9140-45B9-98E5-07294895EFF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD3680B1-9140-45B9-98E5-07294895EFF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD3680B1-9140-45B9-98E5-07294895EFF0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
