@@ -19,7 +19,7 @@ tutorial on my blog:
 http://codeclimber.net.nz/archive/2009/02/05/how-to-use-ninject-with-asp.net-mvc.aspx
 
 I also wrote a post explaining in detail how to use this extension:
-http://codeclimber.net.nz/archive/2009/02/xxxxxxxxxxxxxxx
+http://codeclimber.net.nz/archive/2009/02/15/extending-ninject-to-inject-dependencies-into-action-filters.aspx
 
 
 - Getting the code
