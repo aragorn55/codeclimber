@@ -8,6 +8,7 @@ namespace NinjectFilterInjectorTest.Controllers
     [TitleActionFilter]
     public class HomeController : Controller
     {
+        [InjectionAuthorizeFilter]
         public ActionResult Index()
         {
             ViewData["Title"] = "Home Page";
