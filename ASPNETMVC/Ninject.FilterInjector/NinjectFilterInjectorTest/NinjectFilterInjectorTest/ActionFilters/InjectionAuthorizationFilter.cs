@@ -4,7 +4,7 @@ using NinjectFilterInjectorTest.Models;
 
 namespace NinjectFilterInjectorTest.ActionFilters
 {
-  public class InjectionAuthorizeFilter:AuthorizeAttribute
+  public class InjectionAuthorizeFilter: AuthorizeAttribute
   {
     [Inject]
     public IAuthorizationModule _authModule{ get; set; }
@@ -13,8 +13,6 @@ namespace NinjectFilterInjectorTest.ActionFilters
     {
       if (_authModule == null || !_authModule.IsAuthorized)
         filterContext.Result = new EmptyResult();
-      
-        
     }
   }
 }

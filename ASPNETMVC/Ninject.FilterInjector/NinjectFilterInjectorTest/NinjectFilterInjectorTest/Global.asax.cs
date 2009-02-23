@@ -40,7 +40,8 @@ namespace NinjectFilterInjectorTest
         public override void Load()
         {
             Bind<IGreetingService>().To<GreetingServiceImpl>();
-          Bind<IAuthorizationModule>().To<AuthorizationModuleImpl>();
+            Bind<IAuthorizationModule>().To<AuthorizationModuleImpl>();
+            Bind<IErrorHandler>().To<ErrorHandlerImpl>();
             /*
              * Uncomment this if you want to remove the [Inject]
              * attribute in the TitleActionFilterAttribute class

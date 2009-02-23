@@ -31,10 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Codeclimber.Ninject.FilterInjector, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Dependencies\Codeclimber.Ninject.FilterInjector.dll</HintPath>
-    </Reference>
     <Reference Include="Ninject.Conditions, Version=1.5.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\Ninject.Conditions.dll</HintPath>
@@ -83,6 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionFilters\InjectionAuthorizationFilter.cs" />
+    <Compile Include="ActionFilters\InjectionHandleErrorAttribute.cs" />
     <Compile Include="ActionFilters\TitleActionFilterAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -94,7 +91,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AuthorizationModuleImpl.cs" />
+    <Compile Include="Models\ErrorHandlerImpl.cs" />
     <Compile Include="Models\GreetingServiceImpl.cs" />
+    <Compile Include="Models\IErrorHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -120,6 +119,12 @@
     <Content Include="Views\Shared\LogOnUserControl.ascx" />
     <Content Include="Views\Shared\Site.Master" />
     <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Codeclimber.Ninject.FilterInjector\Codeclimber.Ninject.FilterInjector.csproj">
+      <Project>{0A808318-FEEF-40F3-A531-459A30EA4157}</Project>
+      <Name>Codeclimber.Ninject.FilterInjector</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
