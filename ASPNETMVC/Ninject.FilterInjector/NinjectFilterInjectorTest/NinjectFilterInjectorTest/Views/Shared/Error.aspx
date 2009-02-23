@@ -6,6 +6,7 @@
 
 <asp:Content ID="errorContent" ContentPlaceHolderID="MainContent" runat="server">
     <h2>
-        Sorry, an error occurred while processing your request.
+        Sorry, an error occurred while processing your request:<br />
+        <%= Model.Exception.Message %>
     </h2>
 </asp:Content>

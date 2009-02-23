@@ -23,5 +23,10 @@ namespace NinjectFilterInjectorTest.ActionFilters
                 result.ViewData["Title"] += " - " + _service.GetGreeting();
             }
         }
+
+        public override void OnResultExecuted(ResultExecutedContext filterContext)
+        {
+            filterContext.RequestContext.HttpContext.Response.Output.WriteLine(_service.GetGreeting());
+        }
     }
 }

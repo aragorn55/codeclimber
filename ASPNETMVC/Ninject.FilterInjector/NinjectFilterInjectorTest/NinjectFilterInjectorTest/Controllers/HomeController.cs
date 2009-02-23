@@ -1,10 +1,11 @@
 ﻿
+using System;
 using System.Web.Mvc;
 using NinjectFilterInjectorTest.ActionFilters;
 
 namespace NinjectFilterInjectorTest.Controllers
 {
-    [HandleError]
+    [InjectionHandleError]
     [TitleActionFilter]
     public class HomeController : Controller
     {
@@ -19,6 +20,7 @@ namespace NinjectFilterInjectorTest.Controllers
 
         public ActionResult About()
         {
+            throw new Exception();
             return View();
         }
     }
