@@ -14,9 +14,10 @@ How to use it:
 3 - Add the control inside the page:
 
 <uc1:LinkText id="ll" runat="server"
-  Domain="www.linklift.de"
+  Domain="external.linklift.net"
   FileName="~/LL_<temporaryfilename>.xml"
   Adspace="<yourAdspaceId>"
+  Secret="<yourSecretCode>"
   CheckAfter="1440" />
 
 There a few properties you can set:
@@ -24,6 +25,7 @@ There a few properties you can set:
     * Domain: is the host name of the server you want to get the text links from
     * Filename: is the name of the file that will be created on your server to locally cache the link definition
     * Adspace: your unique identifier, the one retrieved during the registration
+    * Secret: your secret code identifier, the one given to you by LinkLift
     * CheckAfter: duration of the local cache specified in minutes. After this time has passed the control will update the text link definition retrieving a new file from the server
     * WebRequestTimeout: timeout in milliseconds for the request to the server (not in the snippet above, and defaults to 7sec).
 

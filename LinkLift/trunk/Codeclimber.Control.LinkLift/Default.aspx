@@ -11,9 +11,10 @@
     <form id="form1" runat="server">
     <div>
     <uc1:LinkText id="ll" runat="server"
-	Domain="www.linklift.de"
+	Domain="external.linklift.net"
 	FileName="~/LL_496fId26b30.xml"
 	Adspace="69d64bf23I0"
+	Secret="YuVtkZJ7Ql"
 	CheckAfter="5" />
     </div>
     </form>

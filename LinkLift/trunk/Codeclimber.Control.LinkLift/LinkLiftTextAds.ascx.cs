@@ -22,7 +22,7 @@ namespace CodeClimber.Controls.Linklift
 		private const string ADSCACHE = "ADS-CACHE";
 		private const string ADSEXPIRATION = "ADS-EXPIRATION";
 		
-		private int _recheck = 1*60*24;
+		private int _checkAfter = 1*60*24;
 
         /// <summary>
         /// Number of minutes to keep a local version of the XML file.
@@ -30,11 +30,11 @@ namespace CodeClimber.Controls.Linklift
         /// </summary>
 		public int CheckAfter
 		{
-			get { return _recheck; }
-			set { _recheck = value; }
-		} 
+			get { return _checkAfter; }
+			set { _checkAfter = value; }
+		}
 
-		private const string URLFORMAT = "http://{0}/external/textlink_data.php5?adspace={1}";
+        private const string URLFORMAT = "http://{0}/external/textlink_data/?website_key={1}&linklift_secret={2}";
 
 		private int _webRequestTimeout = 7000;
 
@@ -48,7 +48,7 @@ namespace CodeClimber.Controls.Linklift
 			set { _webRequestTimeout = value; }
 		}
 
-        private string _domain = "www.linklift.de";
+        private string _domain = "external.linklift.net";
 
         /// <summary>
         /// Domain of the LinkLift server.
@@ -83,7 +83,19 @@ namespace CodeClimber.Controls.Linklift
 			set { _adspace = value; }
 		}
 
-		private string FullPath
+	    private string _secret;
+
+        /// <summary>
+        /// Secret code to authorize Ads download.
+        /// (Provided by LinkLift)
+        /// </summary>
+	    public string Secret
+	    {
+	        get { return _secret; }
+	        set { _secret = value; }
+	    }
+
+	    private string FullPath
 		{
 			get { return Server.MapPath(VirtualPathUtility.ToAbsolute(_fileName)); }
 		}
@@ -129,8 +141,14 @@ namespace CodeClimber.Controls.Linklift
 					retVal = LoadAdsFromFile();
 					Cache.Insert(ADSCACHE, retVal, new System.Web.Caching.CacheDependency(FullPath));
 				}
-				catch
+				catch (Exception e)
 				{
+				    retVal = new Ads();
+				    retVal.adspace = new TextLink[1];
+				    retVal.adspace[0] = new TextLink();
+				    retVal.adspace[0].text = e.Message;
+				    retVal.adspace[0].prefix = "Error:";
+				    retVal.adspace[0].url = "#";
 				}
 			}
 			return retVal;
@@ -147,7 +165,7 @@ namespace CodeClimber.Controls.Linklift
 
 		private void RetrieveAdsFromServer()
 		{
-			File.WriteAllText(FullPath, DownloadAdvertisementXml(String.Format(URLFORMAT, _domain, _adspace), _webRequestTimeout));
+			File.WriteAllText(FullPath, DownloadAdvertisementXml(String.Format(URLFORMAT, _domain, _adspace, _secret), _webRequestTimeout));
 		}
 
 		private DateTime GetExpirationDate()
@@ -160,7 +178,7 @@ namespace CodeClimber.Controls.Linklift
 				FileInfo info = new FileInfo(FullPath);
 				if (info.Exists)
 				{
-					retVal = info.LastWriteTime.AddMinutes(_recheck);
+					retVal = info.LastWriteTime.AddMinutes(_checkAfter);
 					Cache.Insert(ADSEXPIRATION, retVal, new System.Web.Caching.CacheDependency(FullPath),retVal,System.Web.Caching.Cache.NoSlidingExpiration);
 				}
 				else
@@ -176,25 +194,17 @@ namespace CodeClimber.Controls.Linklift
 			if (url == null) throw new ArgumentNullException("url");
 			if (timeout == 0) throw new ArgumentNullException("timeout");
 
-			try
-			{
-				WebRequest request = WebRequest.Create(url);
-				request.Timeout = timeout;
 
-				using (WebResponse response = request.GetResponse())
+			WebRequest request = WebRequest.Create(url);
+			request.Timeout = timeout;
+
+			using (WebResponse response = request.GetResponse())
+			{
+				using (StreamReader reader = new StreamReader(response.GetResponseStream()))
 				{
-					using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-					{
-						return reader.ReadToEnd();
-					}
+					return reader.ReadToEnd();
 				}
 			}
-			catch
-			{
-
-			}
-
-			return string.Empty;
 		}
 	}
 }
