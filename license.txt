@@ -1,4 +1,4 @@
-Copyright (c) 2007, Simone Chiaretta
+Copyright (c) 2007-2009, Simone Chiaretta
 
 All rights reserved.
 
