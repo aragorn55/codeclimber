@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\References\Json.NET\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,9 +46,27 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Exceptions\AuthTokenException.cs" />
+    <Compile Include="Exceptions\FeedNotFoundException.cs" />
+    <Compile Include="Exceptions\GoogleResponseException.cs" />
+    <Compile Include="Exceptions\GoogleResponseNullException.cs" />
+    <Compile Include="Exceptions\IncorrectUsernameOrPasswordException.cs" />
+    <Compile Include="Exceptions\LoginFailedException.cs" />
+    <Compile Include="Exceptions\WebResponseException.cs" />
+    <Compile Include="ReaderCommand.cs" />
     <Compile Include="IHttpService.cs" />
+    <Compile Include="IUriBuilder.cs" />
+    <Compile Include="Model\AlternativeUrl.cs" />
+    <Compile Include="Model\Category.cs" />
+    <Compile Include="Model\Feed.cs" />
+    <Compile Include="Model\FeedItem.cs" />
+    <Compile Include="Model\User.cs" />
     <Compile Include="ReaderService.cs" />
+    <Compile Include="Services\GoogleReaderUrlBuilder.cs" />
+    <Compile Include="Services\HttpService.cs" />
+    <Compile Include="UrlType.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

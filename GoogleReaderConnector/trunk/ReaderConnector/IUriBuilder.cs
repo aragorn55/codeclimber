@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Net;
 
 namespace CodeClimber.GoogleReaderConnector
 {
-    public interface IHttpService: IDisposable
+    public interface IUriBuilder
     {
-        WebResponse PerformGet(Uri url, object parameters);
+        Uri BuildUri(UrlType type, string url);
     }
 }
