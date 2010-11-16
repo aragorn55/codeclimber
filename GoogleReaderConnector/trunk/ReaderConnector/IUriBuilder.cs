@@ -7,6 +7,6 @@ namespace CodeClimber.GoogleReaderConnector
 {
     public interface IUriBuilder
     {
-        Uri BuildUri(UrlType type, string url);
+        Uri BuildUri(UrlType type, string url, ReaderParameters parameters);
     }
 }

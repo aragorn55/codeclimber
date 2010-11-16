@@ -25,9 +25,9 @@ namespace CodeClimber.GoogleReaderConsole
 
             using (ReaderService rdr = new ReaderService(username, password, clientName, builder, service))
             {
-                foreach (FeedItem item in rdr.GetFeedContent("http://feeds.feedburner.com/codeclimber", 5))
+                foreach (FeedItem item in rdr.GetFeedContent("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction=ItemDirection.Ascending, MaxItems=5} ))
                 {
-                    Console.WriteLine("  - " + item.Author + ": " + item.Title);
+                    Console.WriteLine(" - " + item.Author + " : " + item.Title);
                 }
             }
 
