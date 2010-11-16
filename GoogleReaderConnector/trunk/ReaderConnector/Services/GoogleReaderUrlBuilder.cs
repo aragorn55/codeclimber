@@ -56,12 +56,15 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         #region IUriBuilder Members
 
-        public Uri BuildUri(UrlType type, string url)
+        public Uri BuildUri(UrlType type, string url, ReaderParameters parameters)
         {
+            string queryString = "";
+            if (parameters != null)
+                queryString = "?" + parameters.MakeQueryString();
             switch (type)
             {
                 case UrlType.Feed:
-                    return new Uri(FeedUrl + url, UriKind.Absolute);
+                    return new Uri(FeedUrl + url + queryString, UriKind.Absolute);
                 default:
                     return new Uri("");
             }

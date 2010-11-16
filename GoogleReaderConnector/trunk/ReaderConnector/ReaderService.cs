@@ -35,21 +35,26 @@ namespace CodeClimber.GoogleReaderConnector
         }
 
 
-        public IEnumerable<FeedItem> GetFeedContent(string feedUrl, int maxItems)
+        public IEnumerable<FeedItem> GetFeedContent(string feedUrl, ReaderParameters parameters)
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl);
+            parameters.Client = ClientName;
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl,parameters);
 
+            Feed feed = GetFeed(requestUrl);
 
+            return feed.Items;
+        }
+
+        private Feed GetFeed(Uri requestUrl)
+        {
             JsonSerializer serializer = new JsonSerializer();
 
             Feed feed;
-
             using (JsonReader reader = new JsonTextReader(new StreamReader(_httpService.PerformGet(requestUrl, null).GetResponseStream())))
             {
                 feed = serializer.Deserialize<Feed>(reader);
             }
-
-            return feed.Items;
+            return feed;
         }
     }
 }

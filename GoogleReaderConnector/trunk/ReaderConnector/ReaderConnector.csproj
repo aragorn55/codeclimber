@@ -53,6 +53,9 @@
     <Compile Include="Exceptions\IncorrectUsernameOrPasswordException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\WebResponseException.cs" />
+    <Compile Include="JsonHelpers\DateTimeUtils.cs" />
+    <Compile Include="JsonHelpers\ReflectionUtils.cs" />
+    <Compile Include="JsonHelpers\UnixDateTimeConverter.cs" />
     <Compile Include="ReaderCommand.cs" />
     <Compile Include="IHttpService.cs" />
     <Compile Include="IUriBuilder.cs" />
@@ -61,6 +64,7 @@
     <Compile Include="Model\Feed.cs" />
     <Compile Include="Model\FeedItem.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="ReaderParameters.cs" />
     <Compile Include="ReaderService.cs" />
     <Compile Include="Services\GoogleReaderUrlBuilder.cs" />
     <Compile Include="Services\HttpService.cs" />
