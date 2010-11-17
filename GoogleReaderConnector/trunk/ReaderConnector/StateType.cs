@@ -12,6 +12,7 @@ namespace CodeClimber.GoogleReaderConnector
         Shared,
         Like,
         Read,
+        SharedByFriends,
         KeptUnread
     }
 }
