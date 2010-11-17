@@ -8,10 +8,16 @@ namespace CodeClimber.GoogleReaderConnector
 {
     public class ReaderParameters
     {
-        public DateTime From { get; set; }
+        public DateTime FromDate { get; set; }
         public int MaxItems { get; set; }
         public ItemDirection Direction { get; set; }
         public string Client { get; set; }
+        public IList<string> Exclude { get; set; }
+
+        public ReaderParameters()
+        {
+            Exclude = new List<string>();
+        }
 
         public string MakeQueryString()
         {
@@ -21,8 +27,8 @@ namespace CodeClimber.GoogleReaderConnector
         public string MakeQueryString(DateTime currentTime)
         {
             List<String> paramParts = new List<string>();
-            if (From != DateTime.MinValue)
-                paramParts.Add(string.Format("ot={0}", From.ConvertToUnixTimestamp()));
+            if (FromDate != DateTime.MinValue)
+                paramParts.Add(string.Format("ot={0}", FromDate.ConvertToUnixTimestamp()));
 
             if (!String.IsNullOrEmpty(Client))
                 paramParts.Add(string.Format("client={0}", Client));
@@ -39,6 +45,12 @@ namespace CodeClimber.GoogleReaderConnector
                     case ItemDirection.Ascending:
                         paramParts.Add("r=o");
                         break;
+                }
+
+            if(Exclude.Count>0)
+                foreach (var feedId in Exclude)
+                {
+                    paramParts.Add(string.Format("xt={0}", feedId));
                 }
 
             paramParts.Add(string.Format("ck={0}", currentTime.ConvertToUnixTimestamp()));
