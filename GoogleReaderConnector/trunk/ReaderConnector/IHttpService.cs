@@ -8,6 +8,7 @@ namespace CodeClimber.GoogleReaderConnector
 {
     public interface IHttpService: IDisposable
     {
-        WebResponse PerformGet(Uri url, object parameters);
+        IClientLoginService ClientLogin { get; set; }
+        WebResponse PerformGet(Uri url, bool authenticate);
     }
 }

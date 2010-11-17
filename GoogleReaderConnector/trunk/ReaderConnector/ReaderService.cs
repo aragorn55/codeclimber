@@ -5,6 +5,7 @@ using System.Text;
 using CodeClimber.GoogleReaderConnector.Model;
 using System.IO;
 using Newtonsoft.Json;
+using CodeClimber.GoogleReaderConnector.Services;
 
 namespace CodeClimber.GoogleReaderConnector
 {
@@ -35,22 +36,35 @@ namespace CodeClimber.GoogleReaderConnector
         }
 
 
-        public IEnumerable<FeedItem> GetFeedContent(string feedUrl, ReaderParameters parameters)
+        public IEnumerable<FeedItem> GetFeedContent(string feedUrl, ReaderParameters parameters, bool authenticate = false)
         {
             parameters.Client = ClientName;
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl,parameters);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl, parameters);
 
-            Feed feed = GetFeed(requestUrl);
+            Feed feed = GetFeed(requestUrl, authenticate);
 
             return feed.Items;
         }
 
-        private Feed GetFeed(Uri requestUrl)
+        public IEnumerable<FeedItem> GetState(StateType state, ReaderParameters parameters,bool authenticate)
+        {
+            parameters.Client = ClientName;
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.State, state, parameters);
+
+            Feed feed = GetFeed(requestUrl, authenticate);
+
+            return feed.Items;
+        }
+
+        private Feed GetFeed(Uri requestUrl, bool authenticate)
         {
             JsonSerializer serializer = new JsonSerializer();
 
+            if (authenticate)
+                _httpService.ClientLogin = new GoogleReaderClientLogin() { Username=Username, Password=Password };
+
             Feed feed;
-            using (JsonReader reader = new JsonTextReader(new StreamReader(_httpService.PerformGet(requestUrl, null).GetResponseStream())))
+            using (JsonReader reader = new JsonTextReader(new StreamReader(_httpService.PerformGet(requestUrl, authenticate).GetResponseStream())))
             {
                 feed = serializer.Deserialize<Feed>(reader);
             }

@@ -10,39 +10,64 @@ namespace CodeClimber.GoogleReaderConnector.Services
 {
     public class HttpService: IHttpService
     {
-
-        public String Auth { get; set; }
+        public IClientLoginService ClientLogin { get; set; }
 
         public HttpService()
-        {
+        { }
 
-        }
-
-        public HttpService(string authorization)
+        public HttpService(IClientLoginService clientLogin)
         {
-            Auth = authorization;
+            ClientLogin = clientLogin;
         }
 
         #region IHttpService Members
 
-        public System.Net.WebResponse PerformGet(Uri url, object parameters)
+        public System.Net.WebResponse PerformGet(Uri url, bool authenticate)
         {
+            if (authenticate && ClientLogin == null)
+                throw new ArgumentNullException("ClientLogin","If you want authentication you have to specify the ClientLogin class to use");
             HttpWebRequest request = null;
             request = (HttpWebRequest)WebRequest.Create(url);
 
-            request.Headers.Add("Authorization", "GoogleLogin auth=" + Auth);
+            if (authenticate)
+            {
+                request.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
+            }
 
-
+            bool ok = false;
+            int retries = 0;
+            HttpWebResponse response = null;
             // Get the response, validate and return.
-            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            if (response == null)
-                throw new GoogleResponseNullException();
-            else if (response.StatusCode != HttpStatusCode.OK)
-                throw new GoogleResponseException(response.StatusCode,
-                    response.StatusDescription);
+            while (!ok)
+            {
+                try
+                {
+                    response = request.GetResponse() as HttpWebResponse;
+                    if (response == null)
+                        throw new GoogleResponseNullException();
+                }
+                catch (WebException webex)
+                {
+                    HttpWebResponse actualResponse = webex.Response as HttpWebResponse;
+                    if(actualResponse==null)
+                        throw new GoogleResponseNullException();
+                    if (actualResponse.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        ClientLogin.ResetAuth();
+                        ok = false;
+                        if (retries++ > 3)
+                            throw new LoginFailedException(actualResponse.StatusCode, actualResponse.StatusDescription);
+                        continue;
+                    }
+                    else if (actualResponse.StatusCode != HttpStatusCode.OK)
+                        throw new GoogleResponseException(actualResponse.StatusCode,
+                            actualResponse.StatusDescription);
+                }
+                ok = true;
+            }
+
 
             StreamReader reader = new StreamReader(response.GetResponseStream());
-            //string test = reader.ReadToEnd();
 
             return response;
         }
@@ -53,7 +78,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         public void Dispose()
         {
-            
+            ClientLogin = null;
         }
 
         #endregion
