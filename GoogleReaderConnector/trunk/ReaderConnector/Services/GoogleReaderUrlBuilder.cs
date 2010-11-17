@@ -67,35 +67,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         public Uri BuildUri(UrlType type, StateType state, ReaderParameters parameters)
         {
-            string stateString = "";
-            switch (state)
-            {
-                case StateType.ReadingList:
-                    stateString = "reading-list";
-                    break;
-                case StateType.Starred:
-                    stateString = "starred";
-                    break;
-                case StateType.Shared:
-                    stateString = "broadcast";
-                    break;
-                case StateType.SharedByFriends:
-                    stateString = "broadcast-friends";
-                    break;
-                case StateType.Like:
-                    stateString = "like";
-                    break;
-                case StateType.Read:
-                    stateString = "read";
-                    break;
-                case StateType.KeptUnread:
-                    stateString = "tracking-kept-unread";
-                    break;
-                default:
-                    stateString = "";
-                    break;
-            }
-            return MakeUri(type, stateString, parameters);
+            return MakeUri(type, state.ConvertToString(), parameters);
         }
 
         public Uri BuildUri(UrlType type, string itemName, ReaderParameters parameters)
