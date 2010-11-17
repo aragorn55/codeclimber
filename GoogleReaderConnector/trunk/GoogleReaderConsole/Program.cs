@@ -28,10 +28,10 @@ namespace CodeClimber.GoogleReaderConsole
             using (ReaderService rdr = new ReaderService(builder, service))
             {
                 //foreach (FeedItem item in rdr.GetFeed("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction=ItemDirection.Descending, MaxItems=20}))
-                foreach (FeedItem item in rdr.GetState(StateType.SharedByFriends, new ReaderParameters() { Direction = ItemDirection.Default, MaxItems=5 }, true))
+                foreach (FeedItem item in rdr.GetState(StateType.ReadingList, new ReaderParameters() { Direction = ItemDirection.Default, MaxItems = 5, Exclude = { "user/-/state/com.google/read" } }, true))
                 //foreach (FeedItem item in rdr.GetTag("ALT.net", new ReaderParameters() { Direction = ItemDirection.Default, MaxItems = 100, Exclude = { "feed/http://feeds.feedburner.com/AyendeRahien" } }, true))
                 {
-                    Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " +item.Author );
+                    Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " + item.Author);
                 }
             }
 
