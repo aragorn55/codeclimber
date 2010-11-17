@@ -95,9 +95,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return MakeUri(type, stateString, parameters);
         }
 
-        public Uri BuildUri(UrlType type, string feed, ReaderParameters parameters)
+        public Uri BuildUri(UrlType type, string itemName, ReaderParameters parameters)
         {
-            return MakeUri(type, feed, parameters);
+            return MakeUri(type, itemName, parameters);
         }
 
         public Uri GetLoginUri()
@@ -113,18 +113,17 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         private Uri MakeUri(UrlType type, string item, ReaderParameters parameters)
         {
-            string queryString = "";
-            if (parameters != null)
-            {
-                parameters.Client = _clientName;
-                queryString = "?" + parameters.MakeQueryString();
-            }
+            parameters.Client = _clientName;
+            string queryString = "?" + parameters.MakeQueryString();
+
             switch (type)
             {
                 case UrlType.Feed:
                     return new Uri(FeedUrl + item + queryString, UriKind.Absolute);
                 case UrlType.State:
                     return new Uri(StateUrl + item + queryString, UriKind.Absolute);
+                case UrlType.Tag:
+                    return new Uri(LabelUrl + item + queryString, UriKind.Absolute);
                 default:
                     return new Uri("");
             }
