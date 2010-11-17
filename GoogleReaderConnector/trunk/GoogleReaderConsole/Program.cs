@@ -19,13 +19,13 @@ namespace CodeClimber.GoogleReaderConsole
             string clientName = "testing the API contact simone@piyosailing.com";
 
             // Query.
-
             IHttpService service = new HttpService();
             IUriBuilder builder = new GoogleReaderUrlBuilder();
 
             using (ReaderService rdr = new ReaderService(username, password, clientName, builder, service))
             {
-                foreach (FeedItem item in rdr.GetFeedContent("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction=ItemDirection.Ascending, MaxItems=5} ))
+                //foreach (FeedItem item in rdr.GetFeedContent("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction=ItemDirection.Ascending, MaxItems=5}, true ))
+                foreach (FeedItem item in rdr.GetState(StateType.ReadingList, new ReaderParameters() { Direction = ItemDirection.Ascending, MaxItems = 5 }, true))
                 {
                     Console.WriteLine(" - " + item.Author + " : " + item.Title);
                 }

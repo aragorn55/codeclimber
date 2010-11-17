@@ -10,37 +10,37 @@ namespace CodeClimber.GoogleReaderConnector.Services
         /// <summary>
         /// Base url for API actions.
         /// </summary>
-        public const string ApiUrl = "https://www.google.com/reader/api/0/";
+        private const string ApiUrl = "https://www.google.com/reader/api/0/";
 
         /// <summary>
         /// State path.
         /// </summary>
-        public const string ContentsPath = "stream/contents/";
+        private const string ContentsPath = "stream/contents/";
 
         /// <summary>
         /// Feed url to be combined with the desired feed.
         /// </summary>
-        public const string FeedUrl = ApiUrl + ContentsPath + "feed/";
+        private const string FeedUrl = ApiUrl + ContentsPath + "feed/";
 
         /// <summary>
         /// State path.
         /// </summary>
-        public const string StatePath = ContentsPath + "user/-/state/com.google/";
+        private const string StatePath = ContentsPath + "user/-/state/com.google/";
 
         /// <summary>
         /// State url to be combined with desired state. For example: starred
         /// </summary>
-        public const string StateUrl = ApiUrl + StatePath;
+        private const string StateUrl = ApiUrl + StatePath;
 
         /// <summary>
         /// Label path.
         /// </summary>
-        public const string LabelPath = ContentsPath + "user/-/label/";
+        private const string LabelPath = ContentsPath + "user/-/label/";
 
         /// <summary>
         /// Label url to be combined with the desired label.
         /// </summary>
-        public const string LabelUrl = ApiUrl + LabelPath;
+        private const string LabelUrl = ApiUrl + LabelPath;
 
         /// <summary>
         /// Client login url where we'll post login data to.
@@ -56,7 +56,42 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         #region IUriBuilder Members
 
-        public Uri BuildUri(UrlType type, string url, ReaderParameters parameters)
+        public Uri BuildUri(UrlType type, StateType state, ReaderParameters parameters)
+        {
+            string stateString = "";
+            switch (state)
+            {
+                case StateType.ReadingList:
+                    stateString = "reading-list";
+                    break;
+                case StateType.Starred:
+                    stateString = "starred";
+                    break;
+                case StateType.Shared:
+                    stateString = "broadcast";
+                    break;
+                case StateType.Like:
+                    stateString = "like";
+                    break;
+                case StateType.Read:
+                    stateString = "read";
+                    break;
+                case StateType.KeptUnread:
+                    stateString = "tracking-kept-unread";
+                    break;
+                default:
+                    stateString = "";
+                    break;
+            }
+            return MakeUri(type, stateString, parameters);
+        }
+
+        public Uri BuildUri(UrlType type, string feed, ReaderParameters parameters)
+        {
+            return MakeUri(type, feed, parameters);
+        }
+
+        private static Uri MakeUri(UrlType type, string item, ReaderParameters parameters)
         {
             string queryString = "";
             if (parameters != null)
@@ -64,7 +99,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
             switch (type)
             {
                 case UrlType.Feed:
-                    return new Uri(FeedUrl + url + queryString, UriKind.Absolute);
+                    return new Uri(FeedUrl + item + queryString, UriKind.Absolute);
+                case UrlType.State:
+                    return new Uri(StateUrl + item + queryString, UriKind.Absolute);
                 default:
                     return new Uri("");
             }

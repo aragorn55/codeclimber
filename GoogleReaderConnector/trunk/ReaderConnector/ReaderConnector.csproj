@@ -66,8 +66,11 @@
     <Compile Include="Model\User.cs" />
     <Compile Include="ReaderParameters.cs" />
     <Compile Include="ReaderService.cs" />
+    <Compile Include="Services\GoogleReaderClientLogin.cs" />
     <Compile Include="Services\GoogleReaderUrlBuilder.cs" />
     <Compile Include="Services\HttpService.cs" />
+    <Compile Include="IClientLoginService.cs" />
+    <Compile Include="StateType.cs" />
     <Compile Include="UrlType.cs" />
   </ItemGroup>
   <ItemGroup />
