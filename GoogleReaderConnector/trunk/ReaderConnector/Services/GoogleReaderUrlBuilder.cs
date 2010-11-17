@@ -79,6 +79,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
                 case StateType.Shared:
                     stateString = "broadcast";
                     break;
+                case StateType.SharedByFriends:
+                    stateString = "broadcast-friends";
+                    break;
                 case StateType.Like:
                     stateString = "like";
                     break;

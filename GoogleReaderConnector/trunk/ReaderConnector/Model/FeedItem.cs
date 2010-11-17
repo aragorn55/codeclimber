@@ -32,6 +32,9 @@ namespace CodeClimber.GoogleReaderConnector.Model
         [JsonProperty("origin")]
         public Blog Blog { get; set; }
 
+        [JsonProperty("via")]
+        public IList<SharingPerson> SharedBy { get; set; }
+
         [JsonProperty]
         public string Author { get; set; }
         [JsonProperty("likingUsers")]
