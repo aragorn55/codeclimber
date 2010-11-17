@@ -12,7 +12,8 @@ namespace CodeClimber.GoogleReaderConnector
         State,
         UserInfo,
         UnreadCount,
-        SubscriptionsEdit,
-        ItemEdit
+        SubscriptionsEdit, //subscription/list + edit
+        ItemEdit, //edit-tag
+        FriendsEdit //friend/list + edit
     }
 }

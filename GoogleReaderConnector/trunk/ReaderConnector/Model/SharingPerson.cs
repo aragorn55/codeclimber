@@ -30,7 +30,7 @@ namespace CodeClimber.GoogleReaderConnector.Model
 
         private string ParseUserIdFromSharedFeed()
         {
-            return new Regex(@"http://www.google.com/reader/public/atom/user/(?<userId>)/state/com.google/broadcast").Match(PublicSharedFeed.AbsoluteUri).Result("${userId}");
+            return new Regex(@"http://www.google.com/reader/public/atom/user/(?<userId>\d+)/state/com.google/broadcast").Match(PublicSharedFeed.AbsoluteUri).Result("${userId}");
         }
     }
 }
