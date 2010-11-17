@@ -19,15 +19,18 @@ namespace CodeClimber.GoogleReaderConsole
             string clientName = "testing the API contact simone@piyosailing.com";
 
             // Query.
-            IHttpService service = new HttpService();
-            IUriBuilder builder = new GoogleReaderUrlBuilder();
 
-            using (ReaderService rdr = new ReaderService(username, password, clientName, builder, service))
+            IHttpService service = new HttpService();
+            IUriBuilder builder = new GoogleReaderUrlBuilder(clientName);
+            IClientLoginService loginService = new GoogleReaderClientLogin(username, password, service, builder);
+            service.ClientLogin = loginService;
+
+            using (ReaderService rdr = new ReaderService(builder, service))
             {
-                //foreach (FeedItem item in rdr.GetFeedContent("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction=ItemDirection.Ascending, MaxItems=5}, true ))
-                foreach (FeedItem item in rdr.GetState(StateType.ReadingList, new ReaderParameters() { Direction = ItemDirection.Ascending, MaxItems = 5 }, true))
+                foreach (FeedItem item in rdr.GetFeedContent("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction=ItemDirection.Descending, MaxItems=20}))
+                //foreach (FeedItem item in rdr.GetState(StateType.ReadingList, new ReaderParameters() { Direction = ItemDirection.Default, MaxItems=100 }, true))
                 {
-                    Console.WriteLine(" - " + item.Author + " : " + item.Title);
+                    Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " +item.Author );
                 }
             }
 

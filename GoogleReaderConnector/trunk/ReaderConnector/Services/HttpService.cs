@@ -66,8 +66,45 @@ namespace CodeClimber.GoogleReaderConnector.Services
                 ok = true;
             }
 
+            return response;
+        }
 
-            StreamReader reader = new StreamReader(response.GetResponseStream());
+        public System.Net.WebResponse PerformPost(Uri url, string postData)
+        {
+            // Get the current post data and encode.
+            ASCIIEncoding ascii = new ASCIIEncoding();
+            byte[] encodedPostData = ascii.GetBytes(postData);
+
+            // Prepare request.
+            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+            request.Method = "POST";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentLength = encodedPostData.Length;
+
+            // Write login info to the request.
+            using (Stream newStream = request.GetRequestStream())
+                newStream.Write(encodedPostData, 0, encodedPostData.Length);
+
+            // Get the response that will contain the Auth token.
+            HttpWebResponse response = null;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+            }
+            catch (WebException ex)
+            {
+                HttpWebResponse faultResponse = ex.Response as HttpWebResponse;
+                if (faultResponse != null && faultResponse.StatusCode == HttpStatusCode.Forbidden)
+                    throw new IncorrectUsernameOrPasswordException(
+                        faultResponse.StatusCode, faultResponse.StatusDescription);
+                else
+                    throw;
+            }
+
+            // Check for login failed.
+            if (response.StatusCode != HttpStatusCode.OK)
+                throw new LoginFailedException(
+                    response.StatusCode, response.StatusDescription);
 
             return response;
         }

@@ -28,7 +28,10 @@ namespace CodeClimber.GoogleReaderConnector.Model
 
         [JsonProperty]
         public FeedSummary Summary { get; set; }
-        
+
+        [JsonProperty("origin")]
+        public Blog Blog { get; set; }
+
         [JsonProperty]
         public string Author { get; set; }
         [JsonProperty("likingUsers")]

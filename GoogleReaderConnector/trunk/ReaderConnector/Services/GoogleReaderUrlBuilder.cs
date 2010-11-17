@@ -7,6 +7,8 @@ namespace CodeClimber.GoogleReaderConnector.Services
 {
     public class GoogleReaderUrlBuilder: IUriBuilder
     {
+        private const string SERVICENAME = "reader";
+
         /// <summary>
         /// Base url for API actions.
         /// </summary>
@@ -53,6 +55,13 @@ namespace CodeClimber.GoogleReaderConnector.Services
         /// </summary>
         private static string postData =
             @"service={0}&Email={1}&Passwd={2}&source={3}&continue=http://www.google.com/";
+        
+        private string _clientName;
+
+        public GoogleReaderUrlBuilder(string clientName)
+        {
+            _clientName = clientName;
+        }
 
         #region IUriBuilder Members
 
@@ -91,11 +100,25 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return MakeUri(type, feed, parameters);
         }
 
-        private static Uri MakeUri(UrlType type, string item, ReaderParameters parameters)
+        public Uri GetLoginUri()
+        {
+            return new Uri(clientLoginUrl);
+        }
+
+        public string GetLoginData(string Username, string Password)
+        {
+            return string.Format(postData, SERVICENAME, Username, Password, _clientName);
+        }
+
+
+        private Uri MakeUri(UrlType type, string item, ReaderParameters parameters)
         {
             string queryString = "";
             if (parameters != null)
+            {
+                parameters.Client = _clientName;
                 queryString = "?" + parameters.MakeQueryString();
+            }
             switch (type)
             {
                 case UrlType.Feed:
