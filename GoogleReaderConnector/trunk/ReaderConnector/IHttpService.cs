@@ -10,5 +10,6 @@ namespace CodeClimber.GoogleReaderConnector
     {
         IClientLoginService ClientLogin { get; set; }
         WebResponse PerformGet(Uri url, bool authenticate);
+        WebResponse PerformPost(Uri url, string postData);
     }
 }

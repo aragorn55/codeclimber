@@ -56,6 +56,7 @@
     <Compile Include="JsonHelpers\DateTimeUtils.cs" />
     <Compile Include="JsonHelpers\ReflectionUtils.cs" />
     <Compile Include="JsonHelpers\UnixDateTimeConverter.cs" />
+    <Compile Include="Model\Blog.cs" />
     <Compile Include="ReaderCommand.cs" />
     <Compile Include="IHttpService.cs" />
     <Compile Include="IUriBuilder.cs" />
