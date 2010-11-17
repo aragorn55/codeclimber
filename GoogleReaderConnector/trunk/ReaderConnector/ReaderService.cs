@@ -28,11 +28,11 @@ namespace CodeClimber.GoogleReaderConnector
         }
 
 
-        public IEnumerable<FeedItem> GetFeedContent(string feedUrl, ReaderParameters parameters, bool authenticate = false)
+        public IEnumerable<FeedItem> GetFeed(string feedUrl, ReaderParameters parameters, bool authenticate = false)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl, parameters);
 
-            Feed feed = GetFeed(requestUrl, authenticate);
+            Feed feed = ParseFeed(requestUrl, authenticate);
 
             return feed.Items;
         }
@@ -41,12 +41,21 @@ namespace CodeClimber.GoogleReaderConnector
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.State, state, parameters);
 
-            Feed feed = GetFeed(requestUrl, authenticate);
+            Feed feed = ParseFeed(requestUrl, authenticate);
 
             return feed.Items;
         }
 
-        private Feed GetFeed(Uri requestUrl, bool authenticate)
+        public IEnumerable<FeedItem> GetTag(string tagName, ReaderParameters parameters, bool authenticate)
+        {
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tagName, parameters);
+
+            Feed feed = ParseFeed(requestUrl, authenticate);
+
+            return feed.Items;
+        }
+
+        private Feed ParseFeed(Uri requestUrl, bool authenticate)
         {
             JsonSerializer serializer = new JsonSerializer();
 
@@ -57,5 +66,7 @@ namespace CodeClimber.GoogleReaderConnector
             }
             return feed;
         }
+
+
     }
 }
