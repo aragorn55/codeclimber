@@ -12,10 +12,10 @@ namespace CodeClimber.GoogleReaderConsole
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("");
+            Console.WriteLine(" ----------- Sync request ------------------");
 
             string username = "simone.chiaretta@gmail.com";
-            string password = "e79d?poz";
+            string password = "----------";
             string clientName = "testing the API contact simone@piyosailing.com";
 
             // Query.
@@ -35,6 +35,9 @@ namespace CodeClimber.GoogleReaderConsole
                 }
             }
 
+            Console.WriteLine(" ----------- Async request ------------------");
+
+ 
             // Pause.
             Console.ReadLine();
         }
