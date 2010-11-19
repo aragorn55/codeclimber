@@ -10,10 +10,10 @@ namespace CodeClimber.GoogleReaderConnector
         Feed,
         Tag,
         State,
-        UserInfo,
         UnreadCount,
         SubscriptionsEdit, //subscription/list + edit
         ItemEdit, //edit-tag
-        FriendsEdit //friend/list + edit
+        FriendsEdit, 
+        People 
     }
 }

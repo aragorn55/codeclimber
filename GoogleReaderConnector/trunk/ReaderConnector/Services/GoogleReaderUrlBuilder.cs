@@ -2,47 +2,44 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Collections.Specialized;
 
 namespace CodeClimber.GoogleReaderConnector.Services
 {
     public class GoogleReaderUrlBuilder: IUriBuilder
     {
         private const string SERVICENAME = "reader";
+        private const string CONTINUE = "http://www.google.com/";
 
         /// <summary>
         /// Base url for API actions.
         /// </summary>
         private const string ApiUrl = "https://www.google.com/reader/api/0/";
 
-        /// <summary>
-        /// State path.
-        /// </summary>
+        
+        // Contents paths
         private const string ContentsPath = "stream/contents/";
-
-        /// <summary>
-        /// Feed url to be combined with the desired feed.
-        /// </summary>
         private const string FeedUrl = ApiUrl + ContentsPath + "feed/";
 
-        /// <summary>
-        /// State path.
-        /// </summary>
-        private const string StatePath = ContentsPath + "user/-/state/com.google/";
 
-        /// <summary>
-        /// State url to be combined with desired state. For example: starred
-        /// </summary>
+        // User path
+        private const string UserPath = ContentsPath + "user/-/";
+
+        private const string StatePath = UserPath + "state/com.google/";
         private const string StateUrl = ApiUrl + StatePath;
 
-        /// <summary>
-        /// Label path.
-        /// </summary>
-        private const string LabelPath = ContentsPath + "user/-/label/";
-
-        /// <summary>
-        /// Label url to be combined with the desired label.
-        /// </summary>
+        private const string LabelPath = UserPath + "label/";
         private const string LabelUrl = ApiUrl + LabelPath;
+
+
+        //Other urls
+        private const string PeopleProfleUrl = ApiUrl + "people/profile";
+        private const string FriendListUrl = ApiUrl + "friend/list";
+        private const string UnreadCountUrl = ApiUrl + "unread-count";
+
+        //PhotoBaseUrl
+        private const string PhotoBaseUrl = "http://s2.googleusercontent.com";
+
 
         /// <summary>
         /// Client login url where we'll post login data to.
@@ -50,12 +47,6 @@ namespace CodeClimber.GoogleReaderConnector.Services
         private static string clientLoginUrl =
             @"https://www.google.com/accounts/ClientLogin";
 
-        /// <summary>
-        /// Data to be sent with the post request.
-        /// </summary>
-        private static string postData =
-            @"service={0}&Email={1}&Passwd={2}&source={3}&continue=http://www.google.com/";
-        
         private string _clientName;
 
         public GoogleReaderUrlBuilder(string clientName)
@@ -75,14 +66,32 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return MakeUri(type, itemName, parameters);
         }
 
+        public Uri BuildUri(UrlType type, ReaderParameters parameters)
+        {
+            return MakeUri(type, "", parameters);
+        }
+
+        public Uri BuildUri(UrlType type)
+        {
+            return MakeUri(type, "", new ReaderParameters());
+        }
+
+
         public Uri GetLoginUri()
         {
             return new Uri(clientLoginUrl);
         }
 
-        public string GetLoginData(string Username, string Password)
+        public NameValueCollection GetLoginData(string Username, string Password)
         {
-            return string.Format(postData, SERVICENAME, Username, Password, _clientName);
+            NameValueCollection values = new NameValueCollection();
+            values.Add("service", SERVICENAME);
+            values.Add("Email", Username);
+            values.Add("Passwd", Password);
+            values.Add("source", _clientName);
+            values.Add("continue", CONTINUE);
+
+            return values;
         }
 
 
@@ -99,6 +108,12 @@ namespace CodeClimber.GoogleReaderConnector.Services
                     return new Uri(StateUrl + item + queryString, UriKind.Absolute);
                 case UrlType.Tag:
                     return new Uri(LabelUrl + item + queryString, UriKind.Absolute);
+                case UrlType.People:
+                    return new Uri(PeopleProfleUrl + queryString, UriKind.Absolute);
+                case UrlType.FriendsEdit:
+                    return new Uri(FriendListUrl + queryString, UriKind.Absolute);
+                case UrlType.UnreadCount:
+                    return new Uri(UnreadCountUrl + queryString, UriKind.Absolute);
                 default:
                     return new Uri("");
             }

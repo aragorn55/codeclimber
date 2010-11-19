@@ -13,10 +13,13 @@ namespace CodeClimber.GoogleReaderConnector
         public ItemDirection Direction { get; set; }
         public string Client { get; set; }
         public IList<string> Exclude { get; set; }
+        public OutputType Output { get; set; }
+        public string UserId { get; set; }
 
         public ReaderParameters()
         {
             Exclude = new List<string>();
+            Output = OutputType.Json;
         }
 
         public string MakeQueryString()
@@ -53,6 +56,10 @@ namespace CodeClimber.GoogleReaderConnector
                     paramParts.Add(string.Format("xt={0}", feedId));
                 }
 
+            if (!String.IsNullOrEmpty(UserId))
+                paramParts.Add(string.Format("u={0}", UserId));
+
+            paramParts.Add(string.Format("output={0}", Output.ToString().ToLowerInvariant()));
             paramParts.Add(string.Format("ck={0}", currentTime.ConvertToUnixTimestamp()));
             return String.Join("&",paramParts.ToArray());
         }
@@ -63,5 +70,11 @@ namespace CodeClimber.GoogleReaderConnector
         Default,
         Descending,
         Ascending
+    }
+
+    public enum OutputType
+    { 
+        Json,
+        Xml
     }
 }

@@ -46,6 +46,8 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="Model\CountInfoList.cs" />
+    <Compile Include="Model\CountInfo.cs" />
     <Compile Include="Exceptions\AuthTokenException.cs" />
     <Compile Include="Exceptions\FeedNotFoundException.cs" />
     <Compile Include="Exceptions\GoogleResponseException.cs" />
@@ -57,6 +59,8 @@
     <Compile Include="JsonHelpers\ReflectionUtils.cs" />
     <Compile Include="JsonHelpers\UnixDateTimeConverter.cs" />
     <Compile Include="Model\Blog.cs" />
+    <Compile Include="Model\Friend.cs" />
+    <Compile Include="Model\FriendList.cs" />
     <Compile Include="Model\SharingPerson.cs" />
     <Compile Include="ReaderCommand.cs" />
     <Compile Include="IHttpService.cs" />
