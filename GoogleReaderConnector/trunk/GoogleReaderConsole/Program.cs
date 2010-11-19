@@ -12,11 +12,11 @@ namespace CodeClimber.GoogleReaderConsole
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(" ----------- Sync request ------------------");
+            
 
-            string username = "simone.chiaretta@gmail.com";
-            string password = "----------";
-            string clientName = "testing the API contact simone@piyosailing.com";
+            string username = "";
+            string password = "";
+            string clientName = "";
 
             // Query.
 
@@ -25,19 +25,61 @@ namespace CodeClimber.GoogleReaderConsole
             IClientLoginService loginService = new GoogleReaderClientLogin(username, password, service, builder);
             service.ClientLogin = loginService;
 
-            using (ReaderService rdr = new ReaderService(builder, service))
+            ReaderService rdr = new ReaderService(builder, service);
+
+            //Console.WriteLine(" ----------- Post list ------------------");
+            ////foreach (FeedItem item in rdr.GetFeed("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction=ItemDirection.Descending, MaxItems=20}))
+            //foreach (FeedItem item in rdr.GetState(StateType.SharedByFriends, new ReaderParameters() { Direction = ItemDirection.Default, MaxItems = 500, Exclude = { "user/-/state/com.google/read" } }))
+            ////foreach (FeedItem item in rdr.GetTag("ALT.net", new ReaderParameters() { Direction = ItemDirection.Default, MaxItems = 100, Exclude = { "feed/http://feeds.feedburner.com/AyendeRahien" } }))
+            //{
+            //    Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " + item.Author);
+            //}
+
+            //Console.WriteLine(" ----------- Friend Detail ------------------");
+
+            //Friend friend = rdr.GetFriend("14290265284323789574");
+            //Console.WriteLine(friend.DisplayName);
+
+            //Console.WriteLine(" ----------- Friend List ------------------");
+
+            //foreach (var item in rdr.GetFriends())
+            //{
+            //    Console.WriteLine(item.DisplayName);
+            //}
+
+            Console.WriteLine(" ----------- Unread Count ------------------");
+
+            var unreadInfo = rdr.GetUnreadCount();
+
+            Console.WriteLine("New Feeds: " + unreadInfo.Single(u => u.Type == CountType.All).Count);
+            Console.WriteLine();
+            Console.WriteLine("Shared by friends: " + unreadInfo.Single(u => u.Type == CountType.AllShared).Count);
+            foreach (var info in unreadInfo.Where(u => u.Type == CountType.Shared))
             {
-                //foreach (FeedItem item in rdr.GetFeed("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction=ItemDirection.Descending, MaxItems=20}))
-                foreach (FeedItem item in rdr.GetState(StateType.ReadingList, new ReaderParameters() { Direction = ItemDirection.Default, MaxItems = 5, Exclude = { "user/-/state/com.google/read" } }, true))
-                //foreach (FeedItem item in rdr.GetTag("ALT.net", new ReaderParameters() { Direction = ItemDirection.Default, MaxItems = 100, Exclude = { "feed/http://feeds.feedburner.com/AyendeRahien" } }, true))
-                {
-                    Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " + item.Author);
-                }
+                Console.WriteLine(" - {0} ({1})",info.Name, info.Count);
             }
 
-            Console.WriteLine(" ----------- Async request ------------------");
+            Console.WriteLine();
+            Console.WriteLine("Unread count by State");
+            foreach (var info in unreadInfo.Where(u => u.Type == CountType.State).OrderBy(u => u.Count))
+            {
+                Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
+            }
+            Console.WriteLine();
+            Console.WriteLine("Unread count by Label");
+            foreach (var info in unreadInfo.Where(u => u.Type == CountType.Label).OrderByDescending(u=>u.Count))
+            {
+                Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
+            }
+            Console.WriteLine();
+            Console.WriteLine("Unread count by Feed");
+            foreach (var info in unreadInfo.Where(u => u.Type == CountType.Feed).OrderByDescending(u => u.Count))
+            {
+                Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
+            }
 
- 
+
+
             // Pause.
             Console.ReadLine();
         }

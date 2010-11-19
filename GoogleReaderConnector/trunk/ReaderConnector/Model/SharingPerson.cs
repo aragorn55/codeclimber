@@ -15,7 +15,7 @@ namespace CodeClimber.GoogleReaderConnector.Model
         [JsonProperty("href")]
         public Uri PublicSharedFeed { get; set; }
 
-        string _userId;
+        private string _userId;
         public string UserId
         {
             get

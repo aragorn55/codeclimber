@@ -1,0 +1,7 @@
+Get profile of user
+http://www.google.com/reader/api/0/people/profile?u=14290265284323789574&output=json
+
+Append the PhotoUrl to http://s2.googleusercontent.com to get the user's icon
+
+Get Friend List
+http://www.google.com/reader/api/0/friend/list?output=json

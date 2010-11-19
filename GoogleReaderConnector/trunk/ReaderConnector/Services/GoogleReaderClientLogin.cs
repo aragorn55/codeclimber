@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using CodeClimber.GoogleReaderConnector.Exceptions;
 using System.Net;
 using System.IO;
+using System.Collections.Specialized;
 
 namespace CodeClimber.GoogleReaderConnector.Services
 {
@@ -42,10 +43,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
         private string PerformClientLogin(string Username, string Password)
         {
             Uri loginUri = _urlBuilder.GetLoginUri();
-            string postData = _urlBuilder.GetLoginData(Username,Password);
+            NameValueCollection postData = _urlBuilder.GetLoginData(Username,Password);
             // Get the response that needs to be parsed.
-            string response = new StreamReader((_httpService.PerformPost(loginUri, postData).GetResponseStream())).ReadToEnd();
-            
+            string response = _httpService.PerformPost(loginUri, postData);
 
             // Get auth token.
             string auth = ParseAuthToken(response);

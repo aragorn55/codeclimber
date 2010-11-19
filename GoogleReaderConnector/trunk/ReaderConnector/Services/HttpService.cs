@@ -5,6 +5,7 @@ using System.Text;
 using System.Net;
 using CodeClimber.GoogleReaderConnector.Exceptions;
 using System.IO;
+using System.Collections.Specialized;
 
 namespace CodeClimber.GoogleReaderConnector.Services
 {
@@ -22,28 +23,30 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         #region IHttpService Members
 
-        public System.Net.WebResponse PerformGet(Uri url, bool authenticate)
+
+
+        public Stream PerformGet(Uri url, bool authenticate)
         {
+            WebClient webClient = new WebClient();
+
             if (authenticate && ClientLogin == null)
                 throw new ArgumentNullException("ClientLogin","If you want authentication you have to specify the ClientLogin class to use");
-            HttpWebRequest request = null;
-            request = (HttpWebRequest)WebRequest.Create(url);
-
-            if (authenticate)
-            {
-                request.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
-            }
 
             bool ok = false;
             int retries = 0;
-            HttpWebResponse response = null;
             // Get the response, validate and return.
+            Stream responseStream = null;
             while (!ok)
             {
                 try
                 {
-                    response = request.GetResponse() as HttpWebResponse;
-                    if (response == null)
+                    if (authenticate)
+                    {
+                        webClient.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
+                    }
+
+                    responseStream = webClient.OpenRead(url);
+                    if (responseStream == null)
                         throw new GoogleResponseNullException();
                 }
                 catch (WebException webex)
@@ -55,7 +58,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
                     {
                         ClientLogin.ResetAuth();
                         ok = false;
-                        if (retries++ > 3)
+                        if (!authenticate || retries++ > 3)
                             throw new LoginFailedException(actualResponse.StatusCode, actualResponse.StatusDescription);
                         continue;
                     }
@@ -66,30 +69,19 @@ namespace CodeClimber.GoogleReaderConnector.Services
                 ok = true;
             }
 
-            return response;
+            return responseStream;
         }
 
-        public System.Net.WebResponse PerformPost(Uri url, string postData)
+        public string PerformPost(Uri url, NameValueCollection values)
         {
-            // Get the current post data and encode.
-            ASCIIEncoding ascii = new ASCIIEncoding();
-            byte[] encodedPostData = ascii.GetBytes(postData);
 
-            // Prepare request.
-            HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
-            request.Method = "POST";
-            request.ContentType = "application/x-www-form-urlencoded";
-            request.ContentLength = encodedPostData.Length;
-
-            // Write login info to the request.
-            using (Stream newStream = request.GetRequestStream())
-                newStream.Write(encodedPostData, 0, encodedPostData.Length);
+            WebClient webClient = new WebClient();
 
             // Get the response that will contain the Auth token.
-            HttpWebResponse response = null;
+            byte[] response = null;
             try
             {
-                response = (HttpWebResponse)request.GetResponse();
+                response = webClient.UploadValues(url, values);
             }
             catch (WebException ex)
             {
@@ -98,26 +90,18 @@ namespace CodeClimber.GoogleReaderConnector.Services
                     throw new IncorrectUsernameOrPasswordException(
                         faultResponse.StatusCode, faultResponse.StatusDescription);
                 else
-                    throw;
+                    // Check for login failed.
+                    if (faultResponse.StatusCode != HttpStatusCode.OK)
+                        throw new LoginFailedException(
+                            faultResponse.StatusCode, faultResponse.StatusDescription);
             }
 
-            // Check for login failed.
-            if (response.StatusCode != HttpStatusCode.OK)
-                throw new LoginFailedException(
-                    response.StatusCode, response.StatusDescription);
 
-            return response;
+            ASCIIEncoding ascii = new ASCIIEncoding();
+            return ascii.GetString(response);
         }
 
         #endregion
 
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            ClientLogin = null;
-        }
-
-        #endregion
     }
 }
