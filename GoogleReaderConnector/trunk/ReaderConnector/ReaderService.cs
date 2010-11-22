@@ -24,93 +24,88 @@ namespace CodeClimber.GoogleReaderConnector
         public IEnumerable<FeedItem> GetFeed(string feedUrl, ReaderParameters parameters, bool authenticate = false)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl, parameters);
-
-            Feed feed = ParseFeed(requestUrl, authenticate);
-
-            return feed.Items;
+            return ExecGetFeed(requestUrl, authenticate);
         }
 
         public IEnumerable<FeedItem> GetState(StateType state, ReaderParameters parameters)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.State, state, parameters);
-
-            Feed feed = ParseFeed(requestUrl, true);
-
-            return feed.Items;
+            return ExecGetFeed(requestUrl, true);
         }
 
         public IEnumerable<FeedItem> GetTag(string tagName, ReaderParameters parameters)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tagName, parameters);
-
-            Feed feed = ParseFeed(requestUrl, true);
-
-            return feed.Items;
+            return ExecGetFeed(requestUrl, true);
         }
 
         public Friend GetFriend(string userId)
         {
             ReaderParameters parameters = new ReaderParameters() { UserId = userId };
+
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.People, parameters);
-
-            IList<Friend> friends = ParseFriends(requestUrl, true);
-
-            return friends[0];
+            Stream stream = _httpService.PerformGet(requestUrl, true);
+            return ParseResultStream<FriendList>(stream).Friends[0];
         }
 
         public IList<Friend> GetFriends()
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.FriendsEdit);
-
-            IList<Friend> friends = ParseFriends(requestUrl, true);
-
-            return friends;
-        }
-
-        private IList<Friend> ParseFriends(Uri requestUrl, bool authenticate)
-        {
-            JsonSerializer serializer = new JsonSerializer();
-
-            FriendList friends;
-            using (JsonReader reader = new JsonTextReader(new StreamReader(_httpService.PerformGet(requestUrl, authenticate))))
-            {
-                friends = serializer.Deserialize<FriendList>(reader);
-            }
-            return friends.Friends;
-        }
-
-
-        private Feed ParseFeed(Uri requestUrl, bool authenticate)
-        {
-            JsonSerializer serializer = new JsonSerializer();
-
-            Feed feed;
-            using (JsonReader reader = new JsonTextReader(new StreamReader(_httpService.PerformGet(requestUrl, authenticate))))
-            {
-                feed = serializer.Deserialize<Feed>(reader);
-            }
-            return feed;
+            Stream stream = _httpService.PerformGet(requestUrl, true);
+            return ParseResultStream<FriendList>(stream).Friends;
         }
 
         public IEnumerable<CountInfo> GetUnreadCount()
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.UnreadCount);
-
-            CountInfoList feed = ParseUnreadCount(requestUrl, true);
-
-            return feed.UnreadCounts;
+            Stream stream = _httpService.PerformGet(requestUrl, true);
+            return ParseResultStream<CountInfoList>(stream).UnreadCounts;
         }
 
-        private CountInfoList ParseUnreadCount(Uri requestUrl, bool authenticate)
+        public void GetFeedAsync(string feedUrl, ReaderParameters parameters, 
+             Action<IEnumerable<FeedItem>> onGetFeedCompleted = null, Action<Exception> onError = null, Action onFinally = null, bool authenticate = false)
+        {
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl, parameters);
+            ExecGetFeedAsync(requestUrl,authenticate,onGetFeedCompleted,onError,onFinally);
+        }
+
+        private void ExecGetFeedAsync(Uri requestUrl, bool authenticate, Action<IEnumerable<FeedItem>> onGetFeedCompleted = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            _httpService.PerformGetAsync(requestUrl, authenticate,
+                delegate(Stream stream)
+                {
+                    Feed feed = ParseResultStream<Feed>(stream);
+
+                    if (onGetFeedCompleted != null)
+                    {
+                        onGetFeedCompleted(feed.Items);
+                    }
+                },
+                onError, onFinally);
+        }
+
+        private IEnumerable<FeedItem> ExecGetFeed(Uri requestUrl, bool authenticate)
+        {
+            Stream stream = _httpService.PerformGet(requestUrl, authenticate);
+            return ParseResultStream<Feed>(stream).Items;
+        }
+
+        private T ParseResultStream<T>(Stream stream) where T : new()
         {
             JsonSerializer serializer = new JsonSerializer();
-
-            CountInfoList list;
-            using (JsonReader reader = new JsonTextReader(new StreamReader(_httpService.PerformGet(requestUrl, authenticate))))
+            T parsed = new T();
+            using (JsonReader reader = new JsonTextReader(new StreamReader(stream)))
             {
-                list = serializer.Deserialize<CountInfoList>(reader);
+                parsed = serializer.Deserialize<T>(reader);
             }
-            return list;
+            return parsed;
+        }
+
+        public void GetTagAsync(string tagName, ReaderParameters parameters,
+             Action<IEnumerable<FeedItem>> onGetFeedCompleted = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tagName, parameters);
+            ExecGetFeedAsync(requestUrl, true, onGetFeedCompleted, onError, onFinally);
         }
     }
 }
