@@ -17,12 +17,28 @@ namespace CodeClimber.GoogleReaderConnector
             _httpService = httpService;
         }
 
+        /// <summary>
+        /// Returns the list of posts inside a feed
+        /// </summary>
+        /// <param name="feedUrl">The url of the feed</param>
+        /// <param name="parameters">The parameters to configure the feed retrieval</param>
+        /// <param name="authenticate">Whether to authenticate or not</param>
+        /// <returns></returns>
         public IEnumerable<FeedItem> GetFeed(string feedUrl, ReaderParameters parameters, bool authenticate = false)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl, parameters);
             return ExecGetFeed(requestUrl, authenticate);
         }
 
+        /// <summary>
+        /// Same as <see cref="GetFeed"/> but asyncronously
+        /// </summary>
+        /// <param name="feedUrl">The url of the feed</param>
+        /// <param name="parameters">The parameters to configure the feed retrieval</param>
+        /// <param name="authenticate">Whether to authenticate or not</param>
+        /// <param name="onGetFeedCompleted">The callback function that will executed when the call is completed successfully</param>
+        /// <param name="onError">The callback function that will executed when an error occurs</param>
+        /// <param name="onFinally">The callback function that will always be executed at the end of the call</param>
         public void GetFeedAsync(string feedUrl, ReaderParameters parameters, 
             Action<IEnumerable<FeedItem>> onGetFeedCompleted = null, Action<Exception> onError = null, Action onFinally = null, bool authenticate = false)
         {
