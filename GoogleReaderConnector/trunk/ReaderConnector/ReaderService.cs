@@ -1,19 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using CodeClimber.GoogleReaderConnector.Model;
 using System.IO;
 using Newtonsoft.Json;
-using CodeClimber.GoogleReaderConnector.Services;
 
 namespace CodeClimber.GoogleReaderConnector
 {
     public class ReaderService
     {
-        private IHttpService _httpService;
-        private IUriBuilder _urlBuilder;
+        private readonly IHttpService _httpService;
+        private readonly IUriBuilder _urlBuilder;
 
         public ReaderService(IUriBuilder builder, IHttpService httpService)
         {
@@ -154,7 +150,7 @@ namespace CodeClimber.GoogleReaderConnector
                 onError, onFinally);
         }
 
-        private T ParseResultStream<T>(Stream stream) where T : new()
+        private static T ParseResultStream<T>(Stream stream) where T : new()
         {
             JsonSerializer serializer = new JsonSerializer();
             T parsed;
