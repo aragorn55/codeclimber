@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Net;
 using CodeClimber.GoogleReaderConnector.Exceptions;
@@ -92,7 +90,50 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return ascii.GetString(response);
         }
 
-        public void PerformGetAsync(Uri requestUrl, bool authenticate, Action<Stream> onGetCompleted = null, Action<Exception> onError = null, Action onFinally = null, int count = 0)
+        public void PerformPostAsync(Uri url, NameValueCollection values, Action<string> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            WebClient webClient = new WebClient();
+
+            webClient.UploadValuesCompleted += delegate(object sender, UploadValuesCompletedEventArgs e)
+                {
+                    try
+                    {
+                        if (e.Error != null)
+                        {
+                            if (onError != null)
+                            {
+                                WebException webex = e.Error as WebException;
+                                HttpWebResponse faultResponse = webex.Response as HttpWebResponse;
+                                if (faultResponse != null && faultResponse.StatusCode == HttpStatusCode.Forbidden)
+                                    onError(new IncorrectUsernameOrPasswordException(
+                                        faultResponse.StatusCode, faultResponse.StatusDescription));
+                                if (faultResponse.StatusCode != HttpStatusCode.OK)
+                                    onError(new LoginFailedException(
+                                        faultResponse.StatusCode, faultResponse.StatusDescription));
+                                else
+                                    onError(e.Error);
+                            }
+                            return;
+                        }
+
+                        if (onSuccess != null)
+                        {
+                            ASCIIEncoding ascii = new ASCIIEncoding();
+                            onSuccess(ascii.GetString(e.Result));
+                        }
+                    }
+                    finally
+                    {
+                        if (onFinally != null)
+                        {
+                            onFinally();
+                        }
+                    } 
+                };
+            webClient.UploadValuesAsync(url,values);
+        }
+
+        public void PerformGetAsync(Uri requestUrl, bool authenticate, Action<Stream> onSuccess = null, Action<Exception> onError = null, Action onFinally = null, int count = 0)
         {
             WebClient webClient = new WebClient();
 
@@ -117,24 +158,25 @@ namespace CodeClimber.GoogleReaderConnector.Services
                                 {
                                     if (onError != null)
                                     {
-                                        onError(e.Error);
+                                        onError(new LoginFailedException(actualResponse.StatusCode, actualResponse.StatusDescription));
                                     }
                                     return;
                                 }
-                                PerformGetAsync(requestUrl,authenticate, onGetCompleted, onError, onFinally, count);
+                                PerformGetAsync(requestUrl, authenticate, onSuccess, onError, onFinally, count);
                                 return;
                             }
 
                             if (onError != null)
                             {
-                                onError(e.Error);
+                                onError(new GoogleResponseException(actualResponse.StatusCode,
+                                                          actualResponse.StatusDescription));
                             }
                             return;
                         }
 
-                        if (onGetCompleted != null)
+                        if (onSuccess != null)
                         {
-                            onGetCompleted(e.Result);
+                            onSuccess(e.Result);
                         }
                     }
                     finally
