@@ -31,32 +31,51 @@ namespace CodeClimber.GoogleReaderConnector.Services
         {
             get 
             {
-                if (String.IsNullOrEmpty(_auth))
-                {
-                    _auth = PerformClientLogin(Username, Password);
-                }
                 return _auth;
             }
-            private set { _auth = value; }
+            set { _auth = value; }
         }
 
-        private string PerformClientLogin(string Username, string Password)
+        public bool HasAuth()
+        {
+            return !String.IsNullOrEmpty(_auth);
+        }
+
+        public bool Login()
         {
             Uri loginUri = _urlBuilder.GetLoginUri();
             NameValueCollection postData = _urlBuilder.GetLoginData(Username,Password);
+            string response;
             // Get the response that needs to be parsed.
-            string response = _httpService.PerformPost(loginUri, postData);
-
+            try
+            {
+                response = _httpService.PerformPost(loginUri, postData);
+            }
+            catch (IncorrectUsernameOrPasswordException)
+            {
+                return false;
+            }
             // Get auth token.
-            string auth = ParseAuthToken(response);
-            return auth;
+           _auth = ParseAuthToken(response);
+           return true;
         }
 
-
-        public void ResetAuth()
+        public void LoginAsync(Action onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
-            Auth = null;
+            Uri loginUri = _urlBuilder.GetLoginUri();
+            NameValueCollection postData = _urlBuilder.GetLoginData(Username, Password);
+            // Get the response that needs to be parsed.
+            _httpService.PerformPostAsync(loginUri, postData,
+                (response) => {
+                    _auth = ParseAuthToken(response);
+                    if (onSuccess != null)
+                    {
+                        onSuccess();
+                    }
+                },
+                onError, onFinally);
         }
+
 
 
         private static string ParseAuthToken(string response)

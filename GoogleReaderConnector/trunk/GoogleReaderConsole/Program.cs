@@ -5,6 +5,7 @@ using System.Text;
 using CodeClimber.GoogleReaderConnector;
 using CodeClimber.GoogleReaderConnector.Services;
 using CodeClimber.GoogleReaderConnector.Model;
+using CodeClimber.GoogleReaderConnector.Exceptions;
 
 namespace CodeClimber.GoogleReaderConsole
 {
@@ -45,41 +46,46 @@ namespace CodeClimber.GoogleReaderConsole
             //    Console.WriteLine(item.DisplayName);
             //}
 
-            //Console.WriteLine(" ----------- Unread Count ------------------");
+            Console.WriteLine(" ----------- Unread Count ------------------");
 
-            //var unreadInfo = rdr.GetUnreadCount();
+            try
+            {
+                var unreadInfo = rdr.GetUnreadCount();
 
-            //Console.WriteLine("New Feeds: " + unreadInfo.Single(u => u.Type == CountType.All).Count);
+                Console.WriteLine("New Feeds: " + unreadInfo.Single(u => u.Type == CountType.All).Count);
 
-            //var sharedList = unreadInfo.SingleOrDefault(u => u.Type == CountType.AllShared);
-            //if (sharedList != null)
-            //{
-            //    Console.WriteLine();
-            //    Console.WriteLine("Shared by friends: " + sharedList.Count);
-            //    foreach (var info in unreadInfo.Where(u => u.Type == CountType.Shared))
-            //    {
-            //        Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
-            //    }
-            //}
+                var sharedList = unreadInfo.SingleOrDefault(u => u.Type == CountType.AllShared);
+                if (sharedList != null)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Shared by friends: " + sharedList.Count);
+                    foreach (var info in unreadInfo.Where(u => u.Type == CountType.Shared))
+                    {
+                        Console.WriteLine(" - {0} ({1})", rdr.GetFriend(info.UserId).DisplayName, info.Count);
+                    }
+                }
 
-            //Console.WriteLine();
-            //Console.WriteLine("Unread count by State");
-            //foreach (var info in unreadInfo.Where(u => u.Type == CountType.State).OrderBy(u => u.Count))
-            //{
-            //    Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
-            //}
-            //Console.WriteLine();
-            //Console.WriteLine("Unread count by Label");
-            //foreach (var info in unreadInfo.Where(u => u.Type == CountType.Label).OrderByDescending(u => u.Count))
-            //{
-            //    Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
-            //}
-            //Console.WriteLine();
-            //Console.WriteLine("Unread count by Feed");
-            //foreach (var info in unreadInfo.Where(u => u.Type == CountType.Feed).OrderByDescending(u => u.Count))
-            //{
-            //    Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
-            //}
+                Console.WriteLine();
+                Console.WriteLine("Unread count by State");
+                foreach (var info in unreadInfo.Where(u => u.Type == CountType.State).OrderBy(u => u.Count))
+                {
+                    Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
+                }
+                Console.WriteLine();
+                Console.WriteLine("Unread count by Label");
+                foreach (var info in unreadInfo.Where(u => u.Type == CountType.Label).OrderByDescending(u => u.Count))
+                {
+                    Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
+                }
+                Console.WriteLine();
+                Console.WriteLine("Unread count by Feed");
+                foreach (var info in unreadInfo.Where(u => u.Type == CountType.Feed).OrderByDescending(u => u.Count))
+                {
+                    Console.WriteLine(" - {0} ({1})", info.Name, info.Count);
+                }
+            }
+            catch (LoginFailedException) { Console.WriteLine("There was a problem with the authentication"); }
+            catch (GoogleResponseException ex) { Console.WriteLine(String.Format("There was a problem with the connection: {0}, {1}",ex.StatusCode,ex.Message)); }
 
 
             Console.WriteLine(" ----------- Post list Async------------------");
@@ -97,21 +103,21 @@ namespace CodeClimber.GoogleReaderConsole
             //            }
             //    );
 
-            rdr.GetTagAsync("ALT.net", new ReaderParameters() { Direction = ItemDirection.Default, MaxItems = 100 },
-                    delegate(IEnumerable<FeedItem> items)
-                    {
-                        foreach (var item in items)
-                        {
-                            Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " + item.Author);
-                        }
+            //rdr.GetTagAsync("ALT.net", new ReaderParameters() { Direction = ItemDirection.Default, MaxItems = 100 },
+            //        delegate(IEnumerable<FeedItem> items)
+            //        {
+            //            foreach (var item in items)
+            //            {
+            //                Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " + item.Author);
+            //            }
 
-                        Console.WriteLine("Press [ENTER] to close");
-                    },
-                    delegate (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                );
+            //            Console.WriteLine("Press [ENTER] to close");
+            //        },
+            //        delegate (Exception ex)
+            //        {
+            //            Console.WriteLine(ex.Message);
+            //        }
+            //    );
 
             Console.ReadLine();
 
