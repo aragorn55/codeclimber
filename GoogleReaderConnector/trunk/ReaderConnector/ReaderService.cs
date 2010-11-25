@@ -36,14 +36,14 @@ namespace CodeClimber.GoogleReaderConnector
         /// <param name="feedUrl">The url of the feed</param>
         /// <param name="parameters">The parameters to configure the feed retrieval</param>
         /// <param name="authenticate">Whether to authenticate or not</param>
-        /// <param name="onGetFeedCompleted">The callback function that will executed when the call is completed successfully</param>
+        /// <param name="onSuccess">The callback function that will executed when the call is completed successfully</param>
         /// <param name="onError">The callback function that will executed when an error occurs</param>
         /// <param name="onFinally">The callback function that will always be executed at the end of the call</param>
         public void GetFeedAsync(string feedUrl, ReaderParameters parameters, 
-            Action<IEnumerable<FeedItem>> onGetFeedCompleted = null, Action<Exception> onError = null, Action onFinally = null, bool authenticate = false)
+            Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null, bool authenticate = false)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl, parameters);
-            ExecGetFeedAsync(requestUrl, authenticate, onGetFeedCompleted, onError, onFinally);
+            ExecGetFeedAsync(requestUrl, authenticate, onSuccess, onError, onFinally);
         }
 
         public IEnumerable<FeedItem> GetState(StateType state, ReaderParameters parameters)
@@ -53,10 +53,10 @@ namespace CodeClimber.GoogleReaderConnector
         }
 
         public void GetStateAsync(StateType state, ReaderParameters parameters,
-            Action<IEnumerable<FeedItem>> onGetFeedCompleted = null, Action<Exception> onError = null, Action onFinally = null)
+            Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.State, state, parameters);
-            ExecGetFeedAsync(requestUrl, true, onGetFeedCompleted, onError, onFinally);
+            ExecGetFeedAsync(requestUrl, true, onSuccess, onError, onFinally);
         }
 
         public IEnumerable<FeedItem> GetTag(string tagName, ReaderParameters parameters)
@@ -66,10 +66,10 @@ namespace CodeClimber.GoogleReaderConnector
         }
 
         public void GetTagAsync(string tagName, ReaderParameters parameters,
-             Action<IEnumerable<FeedItem>> onGetFeedCompleted = null, Action<Exception> onError = null, Action onFinally = null)
+             Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tagName, parameters);
-            ExecGetFeedAsync(requestUrl, true, onGetFeedCompleted, onError, onFinally);
+            ExecGetFeedAsync(requestUrl, true, onSuccess, onError, onFinally);
         }
 
         public Friend GetFriend(string userId)
@@ -81,7 +81,7 @@ namespace CodeClimber.GoogleReaderConnector
             return ParseResultStream<FriendList>(stream).Friends[0];
         }
 
-        public void GetFriendAsync(string userId, Action<Friend> onGetFriendCompleted = null, Action<Exception> onError = null, Action onFinally = null)
+        public void GetFriendAsync(string userId, Action<Friend> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             ReaderParameters parameters = new ReaderParameters() { UserId = userId };
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.People, parameters);
@@ -91,9 +91,9 @@ namespace CodeClimber.GoogleReaderConnector
                 {
                     FriendList friends = ParseResultStream<FriendList>(stream);
 
-                    if (onGetFriendCompleted != null)
+                    if (onSuccess != null)
                     {
-                        onGetFriendCompleted(friends.Friends[0]);
+                        onSuccess(friends.Friends[0]);
                     }
                 },
                 onError, onFinally);
@@ -106,7 +106,7 @@ namespace CodeClimber.GoogleReaderConnector
             return ParseResultStream<FriendList>(stream).Friends;
         }
 
-        public void GetFriendsAsync(Action<IEnumerable<Friend>> onGetFriendsCompleted = null, Action<Exception> onError = null, Action onFinally = null)
+        public void GetFriendsAsync(Action<IEnumerable<Friend>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.FriendsEdit);
             _httpService.PerformGetAsync(requestUrl, true,
@@ -114,9 +114,9 @@ namespace CodeClimber.GoogleReaderConnector
                 {
                     FriendList friends = ParseResultStream<FriendList>(stream);
 
-                    if (onGetFriendsCompleted != null)
+                    if (onSuccess != null)
                     {
-                        onGetFriendsCompleted(friends.Friends);
+                        onSuccess(friends.Friends);
                     }
                 },
                 onError, onFinally);
@@ -129,7 +129,7 @@ namespace CodeClimber.GoogleReaderConnector
             return ParseResultStream<CountInfoList>(stream).UnreadCounts;
         }
 
-        public void GetUnreadCountAsync(Action<IEnumerable<CountInfo>> onGetFriendsCompleted = null, Action<Exception> onError = null, Action onFinally = null)
+        public void GetUnreadCountAsync(Action<IEnumerable<CountInfo>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.UnreadCount);
             _httpService.PerformGetAsync(requestUrl, true,
@@ -137,9 +137,9 @@ namespace CodeClimber.GoogleReaderConnector
                 {
                     CountInfoList countInfoList = ParseResultStream<CountInfoList>(stream);
 
-                    if (onGetFriendsCompleted != null)
+                    if (onSuccess != null)
                     {
-                        onGetFriendsCompleted(countInfoList.UnreadCounts);
+                        onSuccess(countInfoList.UnreadCounts);
                     }
                 },
                 onError, onFinally);
@@ -151,16 +151,16 @@ namespace CodeClimber.GoogleReaderConnector
             return ParseResultStream<Feed>(stream).Items;
         }
 
-        private void ExecGetFeedAsync(Uri requestUrl, bool authenticate, Action<IEnumerable<FeedItem>> onGetFeedCompleted = null, Action<Exception> onError = null, Action onFinally = null)
+        private void ExecGetFeedAsync(Uri requestUrl, bool authenticate, Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             _httpService.PerformGetAsync(requestUrl, authenticate,
                 delegate(Stream stream)
                 {
                     Feed feed = ParseResultStream<Feed>(stream);
 
-                    if (onGetFeedCompleted != null)
+                    if (onSuccess != null)
                     {
-                        onGetFeedCompleted(feed.Items);
+                        onSuccess(feed.Items);
                     }
                 },
                 onError, onFinally);
