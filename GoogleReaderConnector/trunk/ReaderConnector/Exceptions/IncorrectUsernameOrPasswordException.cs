@@ -1,9 +1,8 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 
 namespace CodeClimber.GoogleReaderConnector.Exceptions
 {
-    public class IncorrectUsernameOrPasswordException : LoginFailedException
+    internal class IncorrectUsernameOrPasswordException : LoginFailedException
     {
         /// <summary>
         /// Fill in the exception.

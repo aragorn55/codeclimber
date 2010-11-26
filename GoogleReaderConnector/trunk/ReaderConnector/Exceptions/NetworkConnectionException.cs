@@ -2,14 +2,20 @@
 
 namespace CodeClimber.GoogleReaderConnector.Exceptions
 {
-    public class GoogleResponseNullException : Exception
+    public class NetworkConnectionException : Exception
     {
         /// <summary>
         /// Fill in the exception.
         /// </summary>
         /// <param name="message"></param>
-        public GoogleResponseNullException()
+        public NetworkConnectionException()
             : base("No or empty response received from Google.")
+        {
+
+        }
+
+        public NetworkConnectionException(string message)
+            : base(message)
         {
 
         }
