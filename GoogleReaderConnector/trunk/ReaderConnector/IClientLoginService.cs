@@ -14,6 +14,6 @@ namespace CodeClimber.GoogleReaderConnector
 
         Boolean HasAuth();
         Boolean Login();
-        void LoginAsync(Action onSuccess = null, Action<Exception> onError = null, Action onFinally = null);
+        void LoginAsync(Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null);
     }
 }

@@ -21,50 +21,45 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         #region IHttpService Members
 
-        public Stream PerformGet(Uri url, bool authenticate, bool retry = true)
+        public Stream PerformGet(Uri url)
         {
             WebClient webClient = new WebClient();
-
-            if (authenticate && ClientLogin == null)
-                throw new ArgumentNullException("ClientLogin","If you want authentication you have to specify the ClientLogin class to use");
 
             // Get the response, validate and return.
             Stream responseStream = null;
             try
             {
-                if (authenticate)
-                {
-                    if (!ClientLogin.HasAuth())
-                        ClientLogin.Login();
-                    webClient.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
-                }
+                webClient.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
 
                 responseStream = webClient.OpenRead(url);
-                if (responseStream == null)
-                    throw new GoogleResponseNullException();
             }
             catch (WebException webex)
             {
-                HttpWebResponse actualResponse = webex.Response as HttpWebResponse;
-                if(actualResponse==null)
-                    throw new GoogleResponseNullException();
-                if (actualResponse.StatusCode == HttpStatusCode.Unauthorized)
-                {
-                    if (retry)
-                    {
-                        if(ClientLogin.Login())
-                            return PerformGet(url, authenticate, false);
-                    }
-                    if (authenticate)
-                        throw new LoginFailedException(actualResponse.StatusCode, actualResponse.StatusDescription);
-                }
-                if (actualResponse.StatusCode != HttpStatusCode.OK)
-                    throw new GoogleResponseException(actualResponse.StatusCode,
-                                                        actualResponse.StatusDescription);
+                HandleConnectionError(webex);
             }
 
-
             return responseStream;
+        }
+
+        private void HandleConnectionError(WebException webex, bool throwWrongUsernameAndPassword=false)
+        {
+            HttpWebResponse faultResponse = webex.Response as HttpWebResponse;
+            if (faultResponse == null)
+                throw new NetworkConnectionException(webex.Status + ": " + webex.Message);
+
+            if (throwWrongUsernameAndPassword)
+            {
+                if (faultResponse.StatusCode == HttpStatusCode.Forbidden)
+                    throw new IncorrectUsernameOrPasswordException(faultResponse.StatusCode, faultResponse.StatusDescription);
+            }
+            else
+            {
+                  if (faultResponse.StatusCode == HttpStatusCode.Unauthorized)
+                      throw new LoginFailedException(faultResponse.StatusCode, faultResponse.StatusDescription);
+            }
+
+            if (faultResponse.StatusCode != HttpStatusCode.OK)
+                throw new GoogleResponseException(faultResponse.StatusCode, faultResponse.StatusDescription);
         }
 
         public string PerformPost(Uri url, NameValueCollection values)
@@ -77,17 +72,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
             {
                 response = webClient.UploadValues(url, values);
             }
-            catch (WebException ex)
+            catch (WebException webex)
             {
-                HttpWebResponse faultResponse = ex.Response as HttpWebResponse;
-                if (faultResponse != null && faultResponse.StatusCode == HttpStatusCode.Forbidden)
-                    throw new IncorrectUsernameOrPasswordException(
-                        faultResponse.StatusCode, faultResponse.StatusDescription);
-                if (faultResponse != null && faultResponse.StatusCode != HttpStatusCode.OK)
-                    throw new LoginFailedException(
-                        faultResponse.StatusCode, faultResponse.StatusDescription);
-                if (faultResponse == null)
-                    throw new LoginFailedException(0, ex.Status.ToString());
+                HandleConnectionError(webex,true);
             }
 
             ASCIIEncoding ascii = new ASCIIEncoding();
@@ -108,10 +95,15 @@ namespace CodeClimber.GoogleReaderConnector.Services
                             {
                                 WebException webex = e.Error as WebException;
                                 HttpWebResponse faultResponse = webex.Response as HttpWebResponse;
-                                if (faultResponse != null && faultResponse.StatusCode == HttpStatusCode.Forbidden)
+                                
+                                if (faultResponse == null)
+                                    onError(new NetworkConnectionException(webex.Status + ": " + webex.Message));
+
+                                else if (faultResponse != null && faultResponse.StatusCode == HttpStatusCode.Forbidden)
                                     onError(new IncorrectUsernameOrPasswordException(
                                         faultResponse.StatusCode, faultResponse.StatusDescription));
-                                if (faultResponse.StatusCode != HttpStatusCode.OK)
+
+                                else if (faultResponse.StatusCode != HttpStatusCode.OK)
                                     onError(new LoginFailedException(
                                         faultResponse.StatusCode, faultResponse.StatusDescription));
                                 else
@@ -137,15 +129,11 @@ namespace CodeClimber.GoogleReaderConnector.Services
             webClient.UploadValuesAsync(url,values);
         }
 
-        public void PerformGetAsync(Uri requestUrl, bool authenticate, Action<Stream> onSuccess = null, Action<Exception> onError = null, Action onFinally = null, int count = 0)
+        public void PerformGetAsync(Uri requestUrl, Action<Stream> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             WebClient webClient = new WebClient();
 
-            if (authenticate && ClientLogin == null)
-                throw new ArgumentNullException("ClientLogin", "If you want authentication you have to specify the ClientLogin class to use");
-
-            if (authenticate)
-                webClient.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
+            webClient.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
 
             webClient.OpenReadCompleted += delegate(object sender, OpenReadCompletedEventArgs e)
                 {
@@ -157,15 +145,10 @@ namespace CodeClimber.GoogleReaderConnector.Services
                             HttpWebResponse actualResponse = webex.Response as HttpWebResponse;
                             if (actualResponse.StatusCode == HttpStatusCode.Unauthorized)
                             {
-                                if (!authenticate || count++ > 3)
+                                if (onError != null)
                                 {
-                                    if (onError != null)
-                                    {
-                                        onError(new LoginFailedException(actualResponse.StatusCode, actualResponse.StatusDescription));
-                                    }
-                                    return;
+                                    onError(new LoginFailedException(actualResponse.StatusCode, actualResponse.StatusDescription));
                                 }
-                                PerformGetAsync(requestUrl, authenticate, onSuccess, onError, onFinally, count);
                                 return;
                             }
 

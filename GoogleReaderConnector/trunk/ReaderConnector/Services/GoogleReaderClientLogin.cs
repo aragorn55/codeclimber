@@ -50,32 +50,58 @@ namespace CodeClimber.GoogleReaderConnector.Services
             try
             {
                 response = _httpService.PerformPost(loginUri, postData);
+                // Get auth token.
+                _auth = ParseAuthToken(response);
             }
             catch (IncorrectUsernameOrPasswordException)
             {
                 return false;
             }
-            // Get auth token.
-           _auth = ParseAuthToken(response);
+
+
            return true;
         }
 
-        public void LoginAsync(Action onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        public void LoginAsync(Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri loginUri = _urlBuilder.GetLoginUri();
             NameValueCollection postData = _urlBuilder.GetLoginData(Username, Password);
             // Get the response that needs to be parsed.
             _httpService.PerformPostAsync(loginUri, postData,
                 (response) => {
-                    _auth = ParseAuthToken(response);
-                    if (onSuccess != null)
-                    {
-                        onSuccess();
-                    }
+                            try
+                            {
+                                _auth = ParseAuthToken(response);
+                            }
+                            catch (AuthTokenException ex)
+                            {
+                                HandleLoginFailure(onError, ex, onSuccess);
+                                return;
+                            }
+                    
+                            if (onSuccess != null)
+                            {
+                                onSuccess(true);
+                            }
                 },
-                onError, onFinally);
+                (ex)=>
+                    {
+                        HandleLoginFailure(onError, ex, onSuccess);
+                    }, onFinally);
         }
 
+        private void HandleLoginFailure(Action<Exception> onError, Exception ex, Action<bool> onSuccess)
+        {
+            if(onError!=null)
+            {
+                if (ex is IncorrectUsernameOrPasswordException)
+                    onSuccess(false);
+                else
+                {
+                    onError(ex);
+                }
+            }
+        }
 
 
         private static string ParseAuthToken(string response)
@@ -84,7 +110,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
             string auth = "";
             try
             {
-                auth = new Regex(@"Auth=(?<auth>\S+)").Match(response).Result("${auth}");
+                auth = new Regex(@"Auth1=(?<auth>\S+)").Match(response).Result("${auth}");
             }
             catch (Exception ex)
             {

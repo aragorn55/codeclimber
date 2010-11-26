@@ -51,7 +51,7 @@
     <Compile Include="Exceptions\AuthTokenException.cs" />
     <Compile Include="Exceptions\FeedNotFoundException.cs" />
     <Compile Include="Exceptions\GoogleResponseException.cs" />
-    <Compile Include="Exceptions\GoogleResponseNullException.cs" />
+    <Compile Include="Exceptions\NetworkConnectionException.cs" />
     <Compile Include="Exceptions\IncorrectUsernameOrPasswordException.cs" />
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\WebResponseException.cs" />
