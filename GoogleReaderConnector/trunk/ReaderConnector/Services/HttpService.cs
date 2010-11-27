@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using CodeClimber.GoogleReaderConnector.Exceptions;
 using System.IO;
-using System.Collections.Specialized;
+
+#if !WINDOWS_PHONE
+using System.Web;
+#endif
 
 namespace CodeClimber.GoogleReaderConnector.Services
 {
@@ -41,7 +43,23 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
             return responseStream;
         }
-        #endif
+
+        public string PerformPost(Uri url, Dictionary<string, string> values)
+        {
+            WebClient webClient = new WebClient();
+            webClient.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+            string result="";
+            try
+            {
+                result = webClient.UploadString(url, ConverToString(values));
+            }
+            catch (WebException webex)
+            {
+                HandleConnectionError(webex,true);
+            }
+            return result;
+        }
+#endif
 
         private static void HandleConnectionError(WebException webex, bool throwWrongUsernameAndPassword=false)
         {
@@ -64,30 +82,14 @@ namespace CodeClimber.GoogleReaderConnector.Services
                 throw new GoogleResponseException(faultResponse.StatusCode, faultResponse.StatusDescription);
         }
 
-        public string PerformPost(Uri url, Dictionary<string, string> values)
-        {
-            WebClient webClient = new WebClient();
 
-            // Get the response that will contain the Auth token.
-            byte[] response = null;
-            try
-            {
-                response = webClient.UploadValues(url, values);
-            }
-            catch (WebException webex)
-            {
-                HandleConnectionError(webex,true);
-            }
-
-            ASCIIEncoding ascii = new ASCIIEncoding();
-            return ascii.GetString(response);
-        }
 
         public void PerformPostAsync(Uri url, Dictionary<string, string> values, Action<string> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             WebClient webClient = new WebClient();
+            webClient.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
 
-            webClient.UploadValuesCompleted += delegate(object sender, UploadValuesCompletedEventArgs e)
+            webClient.UploadStringCompleted += delegate(object sender, UploadStringCompletedEventArgs e)
                 {
                     try
                     {
@@ -116,8 +118,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
                         if (onSuccess != null)
                         {
-                            ASCIIEncoding ascii = new ASCIIEncoding();
-                            onSuccess(ascii.GetString(e.Result));
+                            onSuccess(e.Result);
                         }
                     }
                     finally
@@ -128,14 +129,14 @@ namespace CodeClimber.GoogleReaderConnector.Services
                         }
                     } 
                 };
-            webClient.UploadValuesAsync(url,values);
+            webClient.UploadStringAsync(url, ConverToString(values));
         }
 
         public void PerformGetAsync(Uri requestUrl, Action<Stream> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             WebClient webClient = new WebClient();
 
-            AddAuthHeader(webClient, ClientLogin.Auth);
+            webClient.Headers[HttpRequestHeader.Authorization] = "GoogleLogin auth=" + ClientLogin.Auth;
 
             webClient.OpenReadCompleted += delegate(object sender, OpenReadCompletedEventArgs e)
                 {
@@ -180,16 +181,18 @@ namespace CodeClimber.GoogleReaderConnector.Services
             webClient.OpenReadAsync(requestUrl);
         }
 
-        private static void AddAuthHeader(WebClient webClient, string auth)
-        {
-#if !WINDOWS_PHONE
-            webClient.Headers.Add("Authorization", "GoogleLogin auth=" + auth);
-#else
-            webClient.Headers[HttpRequestHeader.Authorization]="GoogleLogin auth=" + auth;
-#endif
-        }
-
         #endregion
+
+        private static String ConverToString(Dictionary<string, string> dict)
+        {
+            string[] vars = new string[dict.Count];
+            int i = 0;
+            foreach (KeyValuePair<string, string> keyValuePair in dict)
+            {
+                vars[i++]=String.Format("{0}={1}", keyValuePair.Key, HttpUtility.UrlEncode(keyValuePair.Value));
+            }
+            return string.Join("&", vars);
+        }
 
     }
 }
