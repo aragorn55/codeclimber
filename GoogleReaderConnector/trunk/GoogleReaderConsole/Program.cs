@@ -9,8 +9,8 @@ namespace CodeClimber.GoogleReaderConsole
     {
         static void Main(string[] args)
         {
-            const string username = "";
-            const string password = "";
+            const string username = "simone.chiaretta@gmail.com";
+            const string password = "e79d?poz";
             const string clientName = "test";
 
             // Query.

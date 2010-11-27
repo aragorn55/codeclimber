@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using CodeClimber.GoogleReaderConnector.Exceptions;
@@ -21,6 +22,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         #region IHttpService Members
 
+        #if !WINDOWS_PHONE
         public Stream PerformGet(Uri url)
         {
             WebClient webClient = new WebClient();
@@ -30,7 +32,6 @@ namespace CodeClimber.GoogleReaderConnector.Services
             try
             {
                 webClient.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
-
                 responseStream = webClient.OpenRead(url);
             }
             catch (WebException webex)
@@ -40,6 +41,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
             return responseStream;
         }
+        #endif
 
         private static void HandleConnectionError(WebException webex, bool throwWrongUsernameAndPassword=false)
         {
@@ -62,7 +64,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
                 throw new GoogleResponseException(faultResponse.StatusCode, faultResponse.StatusDescription);
         }
 
-        public string PerformPost(Uri url, NameValueCollection values)
+        public string PerformPost(Uri url, Dictionary<string, string> values)
         {
             WebClient webClient = new WebClient();
 
@@ -81,7 +83,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return ascii.GetString(response);
         }
 
-        public void PerformPostAsync(Uri url, NameValueCollection values, Action<string> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        public void PerformPostAsync(Uri url, Dictionary<string, string> values, Action<string> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             WebClient webClient = new WebClient();
 
@@ -133,7 +135,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
         {
             WebClient webClient = new WebClient();
 
-            webClient.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
+            AddAuthHeader(webClient, ClientLogin.Auth);
 
             webClient.OpenReadCompleted += delegate(object sender, OpenReadCompletedEventArgs e)
                 {
@@ -176,6 +178,15 @@ namespace CodeClimber.GoogleReaderConnector.Services
                 };
 
             webClient.OpenReadAsync(requestUrl);
+        }
+
+        private static void AddAuthHeader(WebClient webClient, string auth)
+        {
+#if !WINDOWS_PHONE
+            webClient.Headers.Add("Authorization", "GoogleLogin auth=" + auth);
+#else
+            webClient.Headers[HttpRequestHeader.Authorization]="GoogleLogin auth=" + auth;
+#endif
         }
 
         #endregion
