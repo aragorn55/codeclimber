@@ -41,7 +41,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return responseStream;
         }
 
-        private void HandleConnectionError(WebException webex, bool throwWrongUsernameAndPassword=false)
+        private static void HandleConnectionError(WebException webex, bool throwWrongUsernameAndPassword=false)
         {
             HttpWebResponse faultResponse = webex.Response as HttpWebResponse;
             if (faultResponse == null)
@@ -99,7 +99,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
                                 if (faultResponse == null)
                                     onError(new NetworkConnectionException(webex.Status + ": " + webex.Message));
 
-                                else if (faultResponse != null && faultResponse.StatusCode == HttpStatusCode.Forbidden)
+                                else if (faultResponse.StatusCode == HttpStatusCode.Forbidden)
                                     onError(new IncorrectUsernameOrPasswordException(
                                         faultResponse.StatusCode, faultResponse.StatusDescription));
 
@@ -141,21 +141,22 @@ namespace CodeClimber.GoogleReaderConnector.Services
                     {
                         if (e.Error != null)
                         {
-                            WebException webex = e.Error as WebException;
-                            HttpWebResponse actualResponse = webex.Response as HttpWebResponse;
-                            if (actualResponse.StatusCode == HttpStatusCode.Unauthorized)
-                            {
-                                if (onError != null)
-                                {
-                                    onError(new LoginFailedException(actualResponse.StatusCode, actualResponse.StatusDescription));
-                                }
-                                return;
-                            }
-
                             if (onError != null)
                             {
-                                onError(new GoogleResponseException(actualResponse.StatusCode,
-                                                          actualResponse.StatusDescription));
+                                WebException webex = e.Error as WebException;
+                                HttpWebResponse actualResponse = webex.Response as HttpWebResponse;
+
+                                if (actualResponse == null)
+                                {
+                                    onError(new NetworkConnectionException(webex.Status + ": " + webex.Message));
+                                }
+                                else if (actualResponse.StatusCode == HttpStatusCode.Unauthorized)
+                                {
+                                    onError(new LoginFailedException(actualResponse.StatusCode, actualResponse.StatusDescription));
+                                    return;
+                                }
+                                else onError(new GoogleResponseException(actualResponse.StatusCode,
+                                                              actualResponse.StatusDescription));
                             }
                             return;
                         }

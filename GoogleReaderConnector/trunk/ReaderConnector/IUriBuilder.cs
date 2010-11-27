@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.Specialized;
 
 namespace CodeClimber.GoogleReaderConnector
@@ -15,6 +12,6 @@ namespace CodeClimber.GoogleReaderConnector
 
         Uri GetLoginUri();
 
-        NameValueCollection GetLoginData(string Username, string Password);
+        NameValueCollection GetLoginData(string username, string password);
     }
 }

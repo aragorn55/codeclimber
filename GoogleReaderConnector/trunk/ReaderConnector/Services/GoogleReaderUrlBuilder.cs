@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Collections.Specialized;
 
 namespace CodeClimber.GoogleReaderConnector.Services
@@ -44,8 +41,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
         /// <summary>
         /// Client login url where we'll post login data to.
         /// </summary>
-        private static string clientLoginUrl =
-            @"https://www.google.com/accounts/ClientLogin";
+        private const string ClientLoginUrl = @"https://www.google.com/accounts/ClientLogin";
 
         private string _clientName;
 
@@ -79,15 +75,15 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         public Uri GetLoginUri()
         {
-            return new Uri(clientLoginUrl);
+            return new Uri(ClientLoginUrl);
         }
 
-        public NameValueCollection GetLoginData(string Username, string Password)
+        public NameValueCollection GetLoginData(string username, string password)
         {
             NameValueCollection values = new NameValueCollection();
             values.Add("service", SERVICENAME);
-            values.Add("Email", Username);
-            values.Add("Passwd", Password);
+            values.Add("Email", username);
+            values.Add("Passwd", password);
             values.Add("source", _clientName);
             values.Add("continue", CONTINUE);
 
