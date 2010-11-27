@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using CodeClimber.GoogleReaderConnector.Exceptions;
 using System.Collections.Specialized;
@@ -36,10 +37,11 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return !String.IsNullOrEmpty(_auth);
         }
 
+#if !WINDOWS_PHONE
         public bool Login()
         {
             Uri loginUri = _urlBuilder.GetLoginUri();
-            NameValueCollection postData = _urlBuilder.GetLoginData(Username,Password);
+            Dictionary<string, string> postData = _urlBuilder.GetLoginData(Username, Password);
             // Get the response that needs to be parsed.
             try
             {
@@ -53,11 +55,12 @@ namespace CodeClimber.GoogleReaderConnector.Services
             }
            return true;
         }
+#endif
 
         public void LoginAsync(Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri loginUri = _urlBuilder.GetLoginUri();
-            NameValueCollection postData = _urlBuilder.GetLoginData(Username, Password);
+            Dictionary<string, string> postData = _urlBuilder.GetLoginData(Username, Password);
             // Get the response that needs to be parsed.
             _httpService.PerformPostAsync(loginUri, postData,
                 response => {

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace CodeClimber.GoogleReaderConnector.Services
@@ -78,9 +79,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return new Uri(ClientLoginUrl);
         }
 
-        public NameValueCollection GetLoginData(string username, string password)
+        public Dictionary<string, string> GetLoginData(string username, string password)
         {
-            NameValueCollection values = new NameValueCollection();
+            Dictionary<string, string> values = new Dictionary<string, string>();
             values.Add("service", SERVICENAME);
             values.Add("Email", username);
             values.Add("Passwd", password);

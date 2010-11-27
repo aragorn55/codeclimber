@@ -10,7 +10,9 @@ namespace CodeClimber.GoogleReaderConnector
         string Password { get; set; }
 
         Boolean HasAuth();
+        #if !WINDOWS_PHONE
         Boolean Login();
+        #endif
         void LoginAsync(Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null);
     }
 }
