@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReaderConnector.Phone", "ReaderConnector\ReaderConnector.Phone.csproj", "{16BC9976-747A-47AB-A087-89A87A8AFE15}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoogleReaderWp7TestApp", "GoogleReaderWp7TestApp\GoogleReaderWp7TestApp.csproj", "{9BBF5A2C-2285-40F1-9A59-3C3D46659512}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,12 @@ Global
 		{16BC9976-747A-47AB-A087-89A87A8AFE15}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16BC9976-747A-47AB-A087-89A87A8AFE15}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16BC9976-747A-47AB-A087-89A87A8AFE15}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BBF5A2C-2285-40F1-9A59-3C3D46659512}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BBF5A2C-2285-40F1-9A59-3C3D46659512}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BBF5A2C-2285-40F1-9A59-3C3D46659512}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{9BBF5A2C-2285-40F1-9A59-3C3D46659512}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BBF5A2C-2285-40F1-9A59-3C3D46659512}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BBF5A2C-2285-40F1-9A59-3C3D46659512}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
