@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using CodeClimber.GoogleReaderConnector.JsonHelpers;
 
 namespace CodeClimber.GoogleReaderConnector
@@ -51,10 +50,7 @@ namespace CodeClimber.GoogleReaderConnector
                 }
 
             if(Exclude.Count>0)
-                foreach (var feedId in Exclude)
-                {
-                    paramParts.Add(string.Format("xt={0}", feedId));
-                }
+                paramParts.AddRange(Exclude.Select(feedId => string.Format("xt={0}", feedId)));
 
             if (!String.IsNullOrEmpty(UserId))
                 paramParts.Add(string.Format("u={0}", UserId));

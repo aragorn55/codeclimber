@@ -1,19 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using CodeClimber.GoogleReaderConnector.Exceptions;
-using System.Net;
-using System.IO;
 using System.Collections.Specialized;
 
 namespace CodeClimber.GoogleReaderConnector.Services
 {
     public class GoogleReaderClientLogin: IClientLoginService
     {
-        private IHttpService _httpService;
-        private IUriBuilder _urlBuilder;
+        private readonly IHttpService _httpService;
+        private readonly IUriBuilder _urlBuilder;
 
         public string Username { get; set; }
         public string Password { get; set; }
@@ -45,11 +40,10 @@ namespace CodeClimber.GoogleReaderConnector.Services
         {
             Uri loginUri = _urlBuilder.GetLoginUri();
             NameValueCollection postData = _urlBuilder.GetLoginData(Username,Password);
-            string response;
             // Get the response that needs to be parsed.
             try
             {
-                response = _httpService.PerformPost(loginUri, postData);
+                string response = _httpService.PerformPost(loginUri, postData);
                 // Get auth token.
                 _auth = ParseAuthToken(response);
             }
@@ -57,8 +51,6 @@ namespace CodeClimber.GoogleReaderConnector.Services
             {
                 return false;
             }
-
-
            return true;
         }
 
@@ -68,7 +60,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
             NameValueCollection postData = _urlBuilder.GetLoginData(Username, Password);
             // Get the response that needs to be parsed.
             _httpService.PerformPostAsync(loginUri, postData,
-                (response) => {
+                response => {
                             try
                             {
                                 _auth = ParseAuthToken(response);
@@ -84,22 +76,17 @@ namespace CodeClimber.GoogleReaderConnector.Services
                                 onSuccess(true);
                             }
                 },
-                (ex)=>
-                    {
-                        HandleLoginFailure(onError, ex, onSuccess);
-                    }, onFinally);
+                ex=> HandleLoginFailure(onError, ex, onSuccess), onFinally);
         }
 
-        private void HandleLoginFailure(Action<Exception> onError, Exception ex, Action<bool> onSuccess)
+        private static void HandleLoginFailure(Action<Exception> onError, Exception ex, Action<bool> onSuccess)
         {
             if(onError!=null)
             {
                 if (ex is IncorrectUsernameOrPasswordException)
                     onSuccess(false);
                 else
-                {
                     onError(ex);
-                }
             }
         }
 
@@ -107,10 +94,10 @@ namespace CodeClimber.GoogleReaderConnector.Services
         private static string ParseAuthToken(string response)
         {
             // Get the auth token.
-            string auth = "";
+            string auth;
             try
             {
-                auth = new Regex(@"Auth1=(?<auth>\S+)").Match(response).Result("${auth}");
+                auth = new Regex(@"Auth=(?<auth>\S+)").Match(response).Result("${auth}");
             }
             catch (Exception ex)
             {
@@ -119,9 +106,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
             // Validate token.
             if (string.IsNullOrEmpty(auth))
-            {
                 throw new AuthTokenException("Missing or invalid 'Auth' token.");
-            }
 
             // Use this token in the header of each new request.
             return auth;
