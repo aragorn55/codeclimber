@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using CodeClimber.GoogleReaderConnector;
 using CodeClimber.GoogleReaderConnector.Exceptions;
+using CodeClimber.GoogleReaderConnector.Parameters;
 using CodeClimber.GoogleReaderConnector.Services;
 
 
@@ -63,43 +64,51 @@ namespace GoogleReaderWp7TestApp
         /// </summary>
         public void LoadData()
         {
-            IUriBuilder urlBuilder = new GoogleReaderUrlBuilder("test");
-            IHttpService httpService = new HttpService();
-            IClientLoginService loginService = new GoogleReaderClientLogin("", "",
-                                                                           httpService, urlBuilder);
-            httpService.ClientLogin = loginService;
+            ReaderServiceAsync rdr = GoogleReaderFactory.CreateReaderServiceAsync("",
+                                                                                  "", "test");
+            rdr.Login(
+                loggedin =>
+                    {
+                        if(loggedin)
+                            GetTag(rdr);
+                        else
+                        {
+                            this.Items.Add(new ItemViewModel { LineOne = "noooo", LineTwo = "Login Failed", LineThree = "so not cool!!" });
+                        }
 
-            ReaderServiceAsync rdr = new ReaderServiceAsync(urlBuilder, httpService);
-            //loginService.LoginAsync(
-            //    loggedin => this.Items.Add(new ItemViewModel { LineOne = "w00t!!!", LineThree = loggedin.ToString(), LineTwo = "so cool!!" }),
-            //        ex =>
-            //            {
-            //                this.Items.Add(new ItemViewModel
-            //                                   {LineOne = "noooo", LineTwo = ex.Message, LineThree = "so not cool!!"});
-            //            },
-            //        () => this.IsDataLoaded = true
-            //    );
+                    },
+                    ex =>
+                    {
+                        this.Items.Add(new ItemViewModel { LineOne = "noooo", LineTwo = ex.Message, LineThree = "so not cool!!" });
+                    },
+                    () => this.IsDataLoaded = true
+                );
 
-            rdr.GetFeedAsync("http://feeds.feedburner.com/codeclimber",
-                             new ReaderParameters {Direction = ItemDirection.Descending, MaxItems = 20},
-                             items =>
-                                 {
-                                     foreach (var item in items)
-                                     {
-                                         this.Items.Add(new ItemViewModel()
-                                                            {
-                                                                LineOne = item.Title,
-                                                                LineTwo = "by " + item.Author,
-                                                                LineThree = item.Summary.Content
-                                                            });
-                                     }
-                                 },
-                             ex =>
-                                 {
-                                    this.Items.Add(new ItemViewModel{LineOne = "Error", LineTwo = ex.Message, LineThree = "so not cool!!"});
-                                 },
-                             () => this.IsDataLoaded = true);
+            
 
+        }
+
+        private void GetTag(ReaderServiceAsync rdr)
+        {
+            rdr.GetTag("ALT.net",
+                       new ReaderFeedParameters {Direction = ItemDirection.Descending, MaxItems = 20},
+                       items =>
+                           {
+                               foreach (var item in items)
+                               {
+                                   this.Items.Add(new ItemViewModel()
+                                                      {
+                                                          LineOne = item.Title,
+                                                          LineTwo = "by " + item.Author,
+                                                          LineThree = item.GetContent().Content
+                                                      });
+                               }
+                           },
+                       ex =>
+                           {
+                               this.Items.Add(new ItemViewModel{LineOne = "Error", LineTwo = ex.Message, LineThree = "so not cool!!"});
+                           },
+                       () => this.IsDataLoaded = true);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

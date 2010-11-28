@@ -1,20 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using CodeClimber.GoogleReaderConnector.Model;
-using Newtonsoft.Json;
+using CodeClimber.GoogleReaderConnector.Parameters;
 
 namespace CodeClimber.GoogleReaderConnector
 {
-    public class ReaderServiceAsync
+    public class ReaderServiceAsync : ReaderServiceBase
     {
-       private readonly IHttpService _httpService;
-        private readonly IUriBuilder _urlBuilder;
-
-        public ReaderServiceAsync(IUriBuilder builder, IHttpService httpService)
+        public ReaderServiceAsync(IUriBuilder builder, IHttpService httpService) : base(builder, httpService)
         {
-            _urlBuilder = builder;
-            _httpService = httpService;
         }
 
         /// <summary>
@@ -25,30 +19,30 @@ namespace CodeClimber.GoogleReaderConnector
         /// <param name="onSuccess">The callback function that will executed when the call is completed successfully</param>
         /// <param name="onError">The callback function that will executed when an error occurs</param>
         /// <param name="onFinally">The callback function that will always be executed at the end of the call</param>
-        public void GetFeedAsync(string feedUrl, ReaderParameters parameters,
+        public void GetFeed(string feedUrl, ReaderFeedParameters parameters,
             Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl, parameters);
             ExecGetFeedAsync(requestUrl, onSuccess, onError, onFinally);
         }
 
-        public void GetStateAsync(StateType state, ReaderParameters parameters,
+        public void GetState(StateType state, ReaderFeedParameters parameters,
             Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.State, state, parameters);
             ExecGetFeedAsync(requestUrl, onSuccess, onError, onFinally);
         }
 
-        public void GetTagAsync(string tagName, ReaderParameters parameters,
+        public void GetTag(string tagName, ReaderFeedParameters parameters,
              Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tagName, parameters);
             ExecGetFeedAsync(requestUrl, onSuccess, onError, onFinally);
         }
 
-        public void GetFriendAsync(string userId, Action<Friend> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        public void GetFriend(string userId, Action<Friend> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
-            ReaderParameters parameters = new ReaderParameters { UserId = userId };
+            ReaderFriendParameters parameters = new ReaderFriendParameters { UserId = userId };
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.People, parameters);
 
             _httpService.PerformGetAsync(requestUrl,
@@ -64,9 +58,9 @@ namespace CodeClimber.GoogleReaderConnector
                 onError, onFinally);
         }
 
-        public void GetFriendsAsync(Action<IEnumerable<Friend>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        public void GetFriends(Action<IEnumerable<Friend>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.FriendsEdit);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.FriendsEdit, new ReaderParametersChoosableOutput());
             _httpService.PerformGetAsync(requestUrl,
                                          stream =>
                                          {
@@ -80,9 +74,9 @@ namespace CodeClimber.GoogleReaderConnector
                 onError, onFinally);
         }
 
-        public void GetUnreadCountAsync(Action<IEnumerable<CountInfo>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        public void GetUnreadCount(Action<IEnumerable<CountInfo>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.UnreadCount);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.UnreadCount, new ReaderParametersChoosableOutput());
             _httpService.PerformGetAsync(requestUrl,
                                          stream =>
                                          {
@@ -111,16 +105,10 @@ namespace CodeClimber.GoogleReaderConnector
                 onError, onFinally);
         }
 
-        private static T ParseResultStream<T>(Stream stream) where T : new()
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            T parsed;
-            using (JsonReader reader = new JsonTextReader(new StreamReader(stream)))
-            {
-                parsed = serializer.Deserialize<T>(reader);
-            }
-            return parsed;
-        }
 
+        public void Login(Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            _httpService.ClientLogin.LoginAsync(onSuccess,onError,onFinally);
+        }
     }
 }

@@ -24,7 +24,10 @@ namespace CodeClimber.GoogleReaderConnector.Model
         public IList<AlternativeUrl> Alternative { get;  set; }
 
         [JsonProperty]
-        public FeedSummary Summary { get; set; }
+        public FeedContent Summary { get; set; }
+
+        [JsonProperty]
+        public FeedContent Content { get; set; }
 
         [JsonProperty("origin")]
         public Blog Blog { get; set; }
@@ -36,9 +39,14 @@ namespace CodeClimber.GoogleReaderConnector.Model
         public string Author { get; set; }
         [JsonProperty("likingUsers")]
         public IList<User> Likes { get;  set; }
+        
+        public FeedContent GetContent()
+        {
+            return Content ?? Summary;
+        }
     }
 
-    public class FeedSummary
+    public class FeedContent
     {
         public string Content { get; set; }
         public string Direction { get; set; }
