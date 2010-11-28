@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using CodeClimber.GoogleReaderConnector.Parameters;
 
 namespace CodeClimber.GoogleReaderConnector.Services
 {
@@ -53,26 +53,20 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         #region IUriBuilder Members
 
-        public Uri BuildUri(UrlType type, StateType state, ReaderParameters parameters)
+        public Uri BuildUri(UrlType type, StateType state, ReaderParametersBase parameters)
         {
             return MakeUri(type, state.ConvertToString(), parameters);
         }
 
-        public Uri BuildUri(UrlType type, string itemName, ReaderParameters parameters)
+        public Uri BuildUri(UrlType type, string itemName, ReaderParametersBase parameters)
         {
             return MakeUri(type, itemName, parameters);
         }
 
-        public Uri BuildUri(UrlType type, ReaderParameters parameters)
+        public Uri BuildUri(UrlType type, ReaderParametersBase parameters)
         {
             return MakeUri(type, "", parameters);
         }
-
-        public Uri BuildUri(UrlType type)
-        {
-            return MakeUri(type, "", new ReaderParameters());
-        }
-
 
         public Uri GetLoginUri()
         {
@@ -91,8 +85,13 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return values;
         }
 
+        public Uri GetPhotoUrl(string photoUrl)
+        {
+            return new Uri(PhotoBaseUrl+photoUrl);
+        }
 
-        private Uri MakeUri(UrlType type, string item, ReaderParameters parameters)
+
+        private Uri MakeUri(UrlType type, string item, ReaderParametersBase parameters)
         {
             parameters.Client = _clientName;
             string queryString = "?" + parameters.MakeQueryString();

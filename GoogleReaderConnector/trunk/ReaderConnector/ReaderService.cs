@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using CodeClimber.GoogleReaderConnector.Model;
 using System.IO;
+using CodeClimber.GoogleReaderConnector.Parameters;
 using Newtonsoft.Json;
 
 namespace CodeClimber.GoogleReaderConnector
 {
-    public class ReaderService
+    public class ReaderService: ReaderServiceBase
     {
-        private readonly IHttpService _httpService;
-        private readonly IUriBuilder _urlBuilder;
-
         public ReaderService(IUriBuilder builder, IHttpService httpService)
+            : base(builder, httpService)
         {
-            _urlBuilder = builder;
-            _httpService = httpService;
         }
 
         /// <summary>
@@ -23,19 +20,19 @@ namespace CodeClimber.GoogleReaderConnector
         /// <param name="feedUrl">The url of the feed</param>
         /// <param name="parameters">The parameters to configure the feed retrieval</param>
         /// <returns></returns>
-        public IEnumerable<FeedItem> GetFeed(string feedUrl, ReaderParameters parameters)
+        public IEnumerable<FeedItem> GetFeed(string feedUrl, ReaderFeedParameters parameters)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Feed, feedUrl, parameters);
             return ExecGetFeed(requestUrl);
         }
 
-        public IEnumerable<FeedItem> GetState(StateType state, ReaderParameters parameters)
+        public IEnumerable<FeedItem> GetState(StateType state, ReaderFeedParameters parameters)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.State, state, parameters);
             return ExecGetFeed(requestUrl);
         }
 
-        public IEnumerable<FeedItem> GetTag(string tagName, ReaderParameters parameters)
+        public IEnumerable<FeedItem> GetTag(string tagName, ReaderFeedParameters parameters)
         {
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tagName, parameters);
             return ExecGetFeed(requestUrl);
@@ -43,7 +40,7 @@ namespace CodeClimber.GoogleReaderConnector
 
         public Friend GetFriend(string userId)
         {
-            ReaderParameters parameters = new ReaderParameters { UserId = userId };
+            ReaderFriendParameters parameters = new ReaderFriendParameters { UserId = userId };
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.People, parameters);
 
             Stream stream = _httpService.PerformGet(requestUrl);
@@ -52,14 +49,14 @@ namespace CodeClimber.GoogleReaderConnector
 
         public IList<Friend> GetFriends()
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.FriendsEdit);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.FriendsEdit, new ReaderParametersChoosableOutput());
             Stream stream = _httpService.PerformGet(requestUrl);
             return ParseResultStream<FriendList>(stream).Friends;
         }
 
         public IEnumerable<CountInfo> GetUnreadCount()
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.UnreadCount);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.UnreadCount, new ReaderParametersChoosableOutput());
             Stream stream = _httpService.PerformGet(requestUrl);
             return ParseResultStream<CountInfoList>(stream).UnreadCounts;
         }
@@ -68,17 +65,6 @@ namespace CodeClimber.GoogleReaderConnector
         {
             Stream stream = _httpService.PerformGet(requestUrl);
             return ParseResultStream<Feed>(stream).Items;
-        }
-
-        private static T ParseResultStream<T>(Stream stream) where T : new()
-        {
-            JsonSerializer serializer = new JsonSerializer();
-            T parsed;
-            using (JsonReader reader = new JsonTextReader(new StreamReader(stream)))
-            {
-                parsed = serializer.Deserialize<T>(reader);
-            }
-            return parsed;
         }
     }
 }

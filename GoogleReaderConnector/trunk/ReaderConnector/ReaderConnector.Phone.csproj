@@ -62,6 +62,7 @@
     <Compile Include="Exceptions\LoginFailedException.cs" />
     <Compile Include="Exceptions\NetworkConnectionException.cs" />
     <Compile Include="Exceptions\WebResponseException.cs" />
+    <Compile Include="GoogleReaderFactory.cs" />
     <Compile Include="IClientLoginService.cs" />
     <Compile Include="IHttpService.cs" />
     <Compile Include="IUriBuilder.cs" />
@@ -79,9 +80,13 @@
     <Compile Include="Model\FriendList.cs" />
     <Compile Include="Model\SharingPerson.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="Parameters\ReaderFeedParameters.cs" />
+    <Compile Include="Parameters\ReaderFriendParameters.cs" />
+    <Compile Include="Parameters\ReaderParametersBase.cs" />
+    <Compile Include="Parameters\ReaderParametersChoosableOutput.cs" />
     <Compile Include="ReaderCommand.cs" />
-    <Compile Include="ReaderParameters.cs" />
     <Compile Include="ReaderServiceAsync.cs" />
+    <Compile Include="ReaderServiceBase.cs" />
     <Compile Include="Services\GoogleReaderClientLogin.cs" />
     <Compile Include="Services\GoogleReaderUrlBuilder.cs" />
     <Compile Include="Services\HttpService.cs" />
