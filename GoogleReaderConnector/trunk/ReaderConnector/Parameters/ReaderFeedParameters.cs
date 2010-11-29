@@ -7,14 +7,15 @@ namespace CodeClimber.GoogleReaderConnector.Parameters
 {
     public class ReaderFeedParameters : ReaderParametersBase
     {
+        private const string stateUrl = "user/-/state/com.google/";
         public DateTime FromDate { get; set; }
         public int MaxItems { get; set; }
         public ItemDirection Direction { get; set; }
-        public IList<string> Exclude { get; set; }
+        public IList<StateType> Exclude { get; set; }
 
         public ReaderFeedParameters()
         {
-            Exclude = new List<string>();
+            Exclude = new List<StateType>();
 
         }
 
@@ -35,10 +36,13 @@ namespace CodeClimber.GoogleReaderConnector.Parameters
                     case ItemDirection.Ascending:
                         _paramParts.Add("r=o");
                         break;
+                    case ItemDirection.Magic:
+                        _paramParts.Add("r=a");
+                        break;
                 }
 
             if(Exclude.Count>0)
-                _paramParts.AddRange(Exclude.Select(feedId => string.Format("xt={0}", (object) feedId)));
+                _paramParts.AddRange(Exclude.Select(state => string.Format("xt={0}", stateUrl+state.ConvertToString())));
             base.FormatParameters(currentTime);
 
         }
@@ -48,6 +52,7 @@ namespace CodeClimber.GoogleReaderConnector.Parameters
     {
         Default,
         Descending,
-        Ascending
+        Ascending,
+	Magic
     }
 }
