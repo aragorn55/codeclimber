@@ -1,11 +1,3 @@
-Get profile of user
-http://www.google.com/reader/api/0/people/profile?u=14290265284323789574&output=json
-
-Append the PhotoUrl to http://s2.googleusercontent.com to get the user's icon
-
-Get Friend List
-http://www.google.com/reader/api/0/friend/list?output=json
-
 
 Get Recommended feeds:
 http://www.google.com/reader/api/0/recommendation/list?n=6
@@ -20,7 +12,6 @@ http://www.google.com/reader/api/0/stream/items/contents (with i=ids passed as d
 
 
 Mark all feed as read
-
 http://www.google.com/reader/api/0/mark-all-as-read s=feed/[feedUrl] (POST)
 
 
