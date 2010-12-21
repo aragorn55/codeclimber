@@ -26,17 +26,17 @@ namespace CodeClimber.GoogleReaderConnector
             ExecGetFeedAsync(requestUrl, onSuccess, onError, onFinally);
         }
 
-        public void GetState(StateType state, ReaderFeedParameters parameters,
+        public void GetTag(ItemTag tag, ReaderFeedParameters parameters,
             Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.State, state, parameters);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tag, parameters);
             ExecGetFeedAsync(requestUrl, onSuccess, onError, onFinally);
         }
 
-        public void GetTag(string tagName, ReaderFeedParameters parameters,
+        public void GetLabel(string label, ReaderFeedParameters parameters,
              Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tagName, parameters);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Label, label, parameters);
             ExecGetFeedAsync(requestUrl, onSuccess, onError, onFinally);
         }
 

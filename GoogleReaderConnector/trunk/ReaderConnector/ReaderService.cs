@@ -26,15 +26,15 @@ namespace CodeClimber.GoogleReaderConnector
             return ExecGetFeed(requestUrl);
         }
 
-        public IEnumerable<FeedItem> GetState(StateType state, ReaderFeedParameters parameters)
+        public IEnumerable<FeedItem> GetTag(ItemTag tag, ReaderFeedParameters parameters)
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.State, state, parameters);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tag, parameters);
             return ExecGetFeed(requestUrl);
         }
 
-        public IEnumerable<FeedItem> GetTag(string tagName, ReaderFeedParameters parameters)
+        public IEnumerable<FeedItem> GetLabel(string label, ReaderFeedParameters parameters)
         {
-            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Tag, tagName, parameters);
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.Label, label, parameters);
             return ExecGetFeed(requestUrl);
         }
 
@@ -59,6 +59,48 @@ namespace CodeClimber.GoogleReaderConnector
             Uri requestUrl = _urlBuilder.BuildUri(UrlType.UnreadCount, new ReaderParametersChoosableOutput());
             Stream stream = _httpService.PerformGet(requestUrl);
             return ParseResultStream<CountInfoList>(stream).UnreadCounts;
+        }
+
+        public bool KeepItemUnread(string feedId, string itemId)
+        {
+            if (!AddTagToItem(feedId, itemId, ItemTag.TrackingKeptUnread)) return false;
+            if (!EditItem(feedId, itemId, ItemTag.KeptUnread, ItemTag.Read, ItemAction.AddAndRemove)) return false;
+            return true;
+        }
+
+        public bool MarkItemRead(string feedId, string itemId)
+        {
+            if (!EditItem(feedId, itemId, ItemTag.Read, ItemTag.KeptUnread, ItemAction.AddAndRemove)) return false;
+            return true;
+        }
+
+        public bool AddTagToItem(string feedId, string itemId, ItemTag tag)
+        {
+            return EditItem(feedId, itemId, tag, ItemTag.None, ItemAction.Add);
+        }
+
+        public bool RemoveTagFromItem(string feedId, string itemId, ItemTag tag)
+        {
+            return EditItem(feedId, itemId, ItemTag.None, tag, ItemAction.Remove);
+        }
+
+        public bool EditItem(string feedId, string itemId, ItemTag addTag, ItemTag removeTag, ItemAction action)
+        {
+            Uri requestUrl = _urlBuilder.BuildUri(UrlType.ItemEdit);
+            string token = GetToken();
+            Dictionary<string, string> postData = _urlBuilder.GetItemEditData(token, feedId, itemId, addTag, removeTag, action);
+            var result = _httpService.PerformPost(requestUrl, postData);
+            if(result.Equals("OK"))
+                return true;
+            return false;
+        }
+
+        private string GetToken()
+        {
+            Uri requestUrl = _urlBuilder.GetTokenUri();
+            Stream stream = _httpService.PerformGet(requestUrl);
+            StreamReader r = new StreamReader(stream);
+            return r.ReadToEnd();
         }
 
         private IEnumerable<FeedItem> ExecGetFeed(Uri requestUrl)

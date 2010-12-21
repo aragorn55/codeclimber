@@ -1,35 +1,39 @@
 ﻿namespace CodeClimber.GoogleReaderConnector
 {
-    public enum StateType
+    public enum ItemTag
     {
+        None,
         ReadingList,
         Starred,
         Shared,
         Like,
         Read,
         SharedByFriends,
-        KeptUnread
+        KeptUnread,
+        TrackingKeptUnread
     }
 
     public static class StateTypeExternsions
     {
-        public static string ConvertToString(this StateType state)
+        public static string ConvertToString(this ItemTag state)
         {
             switch (state)
             {
-                case StateType.ReadingList:
-                    return  "reading-list";
-                case StateType.Starred:
+                case ItemTag.ReadingList:
+                    return "reading-list";
+                case ItemTag.Starred:
                     return "starred";
-                case StateType.Shared:
+                case ItemTag.Shared:
                     return "broadcast";
-                case StateType.SharedByFriends:
+                case ItemTag.SharedByFriends:
                     return "broadcast-friends";
-                case StateType.Like:
+                case ItemTag.Like:
                     return "like";
-                case StateType.Read:
+                case ItemTag.Read:
                     return "read";
-                case StateType.KeptUnread:
+                case ItemTag.KeptUnread:
+                    return "kept-unread";
+                case ItemTag.TrackingKeptUnread:
                     return "tracking-kept-unread";
                 default:
                     return "";

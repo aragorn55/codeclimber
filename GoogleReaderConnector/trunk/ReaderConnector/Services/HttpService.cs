@@ -24,7 +24,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         #region IHttpService Members
 
-        #if !WINDOWS_PHONE
+#if !WINDOWS_PHONE
         public Stream PerformGet(Uri url)
         {
             WebClient webClient = new WebClient();
@@ -51,6 +51,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
             string result="";
             try
             {
+                webClient.Headers.Add("Authorization", "GoogleLogin auth=" + ClientLogin.Auth);
                 result = webClient.UploadString(url, ConverToString(values));
             }
             catch (WebException webex)

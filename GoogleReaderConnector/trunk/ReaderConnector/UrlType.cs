@@ -3,8 +3,8 @@
     public enum UrlType
     {
         Feed,
+        Label,
         Tag,
-        State,
         UnreadCount,
         SubscriptionsEdit, //subscription/list + edit
         ItemEdit, //edit-tag
