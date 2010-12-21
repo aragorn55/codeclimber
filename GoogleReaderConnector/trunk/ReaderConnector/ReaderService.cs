@@ -95,7 +95,7 @@ namespace CodeClimber.GoogleReaderConnector
             return false;
         }
 
-        private string GetToken()
+        public string GetToken()
         {
             Uri requestUrl = _urlBuilder.GetTokenUri();
             Stream stream = _httpService.PerformGet(requestUrl);
