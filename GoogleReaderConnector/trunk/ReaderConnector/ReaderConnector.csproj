@@ -47,6 +47,7 @@
     <Compile Include="..\SolutionInfo.cs">
       <Link>Properties\SolutionInfo.cs</Link>
     </Compile>
+    <Compile Include="ItemAction.cs" />
     <Compile Include="Model\CountInfoList.cs" />
     <Compile Include="Model\CountInfo.cs" />
     <Compile Include="Exceptions\AuthTokenException.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Model\Friend.cs" />
     <Compile Include="Model\FriendList.cs" />
     <Compile Include="Model\SharingPerson.cs" />
+    <Compile Include="Parameters\EmptyReaderParameters.cs" />
     <Compile Include="Parameters\ReaderFeedParameters.cs" />
     <Compile Include="Parameters\ReaderParametersBase.cs" />
     <Compile Include="Parameters\ReaderParametersChoosableOutput.cs" />
@@ -82,7 +84,7 @@
     <Compile Include="Services\GoogleReaderUrlBuilder.cs" />
     <Compile Include="Services\HttpService.cs" />
     <Compile Include="IClientLoginService.cs" />
-    <Compile Include="StateType.cs" />
+    <Compile Include="ItemTag.cs" />
     <Compile Include="UrlType.cs" />
   </ItemGroup>
   <ItemGroup />

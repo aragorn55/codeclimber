@@ -23,17 +23,18 @@ namespace CodeClimber.GoogleReaderConnector.Services
         // User path
         private const string UserPath = ContentsPath + "user/-/";
 
-        private const string StatePath = UserPath + "state/com.google/";
-        private const string StateUrl = ApiUrl + StatePath;
+        private const string TagPath = UserPath + "state/com.google/";
+        private const string TagUrl = ApiUrl + TagPath;
 
         private const string LabelPath = UserPath + "label/";
         private const string LabelUrl = ApiUrl + LabelPath;
 
-
         //Other urls
         private const string PeopleProfleUrl = ApiUrl + "people/profile";
         private const string FriendListUrl = ApiUrl + "friend/list";
+        private const string ItemEditUrl = ApiUrl + "edit-tag";
         private const string UnreadCountUrl = ApiUrl + "unread-count";
+        private const string TokenUrl = ApiUrl + "token";
 
         //PhotoBaseUrl
         private const string PhotoBaseUrl = "http://s2.googleusercontent.com";
@@ -53,9 +54,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
 
         #region IUriBuilder Members
 
-        public Uri BuildUri(UrlType type, StateType state, ReaderParametersBase parameters)
+        public Uri BuildUri(UrlType type, ItemTag tag, ReaderParametersBase parameters)
         {
-            return MakeUri(type, state.ConvertToString(), parameters);
+            return MakeUri(type, tag.ConvertToString(), parameters);
         }
 
         public Uri BuildUri(UrlType type, string itemName, ReaderParametersBase parameters)
@@ -68,9 +69,19 @@ namespace CodeClimber.GoogleReaderConnector.Services
             return MakeUri(type, "", parameters);
         }
 
+        public Uri BuildUri(UrlType type)
+        {
+            return MakeUri(type, "", new EmptyReaderParameters());
+        }
+
         public Uri GetLoginUri()
         {
             return new Uri(ClientLoginUrl);
+        }
+
+        public Uri GetTokenUri()
+        {
+            return new Uri(TokenUrl);
         }
 
         public Dictionary<string, string> GetLoginData(string username, string password)
@@ -81,6 +92,23 @@ namespace CodeClimber.GoogleReaderConnector.Services
             values.Add("Passwd", password);
             values.Add("source", _clientName);
             values.Add("continue", CONTINUE);
+
+            return values;
+        }
+
+        public Dictionary<string, string> GetItemEditData(string token, string feedId, string itemId, ItemTag addTag, ItemTag removeTag, ItemAction action)
+        {
+            Dictionary<string, string> values = new Dictionary<string, string>();
+            values.Add("async","true");
+            values.Add("T", token);
+            values.Add("s", feedId);
+            values.Add("i", itemId);
+
+            if(action==ItemAction.Add || action==ItemAction.AddAndRemove)
+                values.Add("a", TagPath.Replace(ContentsPath, "") + addTag.ConvertToString());
+
+            if (action == ItemAction.Remove || action == ItemAction.AddAndRemove)
+                values.Add("r", TagPath.Replace(ContentsPath, "") + removeTag.ConvertToString());
 
             return values;
         }
@@ -100,9 +128,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
             {
                 case UrlType.Feed:
                     return new Uri(FeedUrl + item + queryString, UriKind.Absolute);
-                case UrlType.State:
-                    return new Uri(StateUrl + item + queryString, UriKind.Absolute);
                 case UrlType.Tag:
+                    return new Uri(TagUrl + item + queryString, UriKind.Absolute);
+                case UrlType.Label:
                     return new Uri(LabelUrl + item + queryString, UriKind.Absolute);
                 case UrlType.People:
                     return new Uri(PeopleProfleUrl + queryString, UriKind.Absolute);
@@ -110,11 +138,14 @@ namespace CodeClimber.GoogleReaderConnector.Services
                     return new Uri(FriendListUrl + queryString, UriKind.Absolute);
                 case UrlType.UnreadCount:
                     return new Uri(UnreadCountUrl + queryString, UriKind.Absolute);
+                case UrlType.ItemEdit:
+                    return new Uri(ItemEditUrl + queryString, UriKind.Absolute);
                 default:
                     return new Uri("");
             }
         }
 
         #endregion
+
     }
 }

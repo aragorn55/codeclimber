@@ -25,16 +25,16 @@ namespace CodeClimber.GoogleReaderConsole
 
             ReaderService rdr = new ReaderService(builder, service);
 
-            //try
-            //{
-            //    Console.WriteLine(" -----------Authentication ------------------");
-            //    bool login = loginService.Login();
-            //    if (!login)
-            //        Console.WriteLine("Authentication failed, please check your username and password");
-            //}
-            //catch (NetworkConnectionException ex) { Console.WriteLine(ex.Message); }
-            //catch (AuthTokenException ex) { Console.WriteLine("Error retrieving authorization token"); }
-            //catch (GoogleResponseException ex) { Console.WriteLine(String.Format("There was a problem with the connection: {0}, {1}", ex.StatusCode, ex.Message)); }
+            try
+            {
+                Console.WriteLine(" -----------Authentication ------------------");
+                bool login = loginService.Login();
+                if (!login)
+                    Console.WriteLine("Authentication failed, please check your username and password");
+            }
+            catch (NetworkConnectionException ex) { Console.WriteLine(ex.Message); }
+            catch (AuthTokenException ex) { Console.WriteLine("Error retrieving authorization token"); }
+            catch (GoogleResponseException ex) { Console.WriteLine(String.Format("There was a problem with the connection: {0}, {1}", ex.StatusCode, ex.Message)); }
 
             //bool doAgain;
             //do
@@ -42,13 +42,17 @@ namespace CodeClimber.GoogleReaderConsole
             //    doAgain = false;
             //    try
             //    {
-            //        Console.WriteLine(" ----------- Post list ------------------");
-            //            //foreach (FeedItem item in rdr.GetFeed("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction = ItemDirection.Descending, MaxItems = 20 }))
-            //            foreach (FeedItem item in rdr.GetState(StateType.ReadingList, new ReaderFeedParameters() {  Direction = ItemDirection.Default, MaxItems = 10 }))
-            //            //foreach (FeedItem item in rdr.GetTag("ALT.net", new ReaderParameters()))
-            //            {
-            //                Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " + item.Author);
-            //            }
+            string itemId = string.Empty;
+            string feedId = string.Empty;
+            Console.WriteLine(" ----------- Post list ------------------");
+            //foreach (FeedItem item in rdr.GetFeed("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction = ItemDirection.Descending, MaxItems = 20 }))
+            foreach (FeedItem item in rdr.GetTag(ItemTag.ReadingList, new ReaderFeedParameters() { Direction = ItemDirection.Default, MaxItems = 1, Exclude = {ItemTag.Read}}))
+            //foreach (FeedItem item in rdr.GetLabel("ALT.net", new ReaderParameters()))
+            {
+                itemId = item.Id;
+                feedId = item.Blog.Id;
+                Console.WriteLine(" - " + item.Blog.Title + " : " + item.Title + " by " + item.Author + "(" + item.Id +")");
+            }
 
             //        Console.WriteLine(" ----------- Friend Detail ------------------");
 
@@ -119,13 +123,16 @@ namespace CodeClimber.GoogleReaderConsole
 
             //} while (doAgain);
 
+            Console.WriteLine(" ----------- Setting Read ------------------");
 
+            rdr.RemoveTagFromItem(feedId, itemId, ItemTag.Shared);
 
+            
 
-            ReaderServiceAsync rdrAsync = new ReaderServiceAsync(builder, service);
-            ////Console.WriteLine(" ----------- Post list Async------------------");
+            //ReaderServiceAsync rdrAsync = new ReaderServiceAsync(builder, service);
+            //////Console.WriteLine(" ----------- Post list Async------------------");
 
-            PerformLogin(rdrAsync, () => { TestGetTag(rdrAsync); });
+            //PerformLogin(rdrAsync, () => { TestGetTag(rdrAsync); });
 
             ////TestGetFeed(rdr);
             //TestGetTag(rdrAsync, loginService);
@@ -196,7 +203,7 @@ namespace CodeClimber.GoogleReaderConsole
 
         private static void TestGetTag(ReaderServiceAsync rdr)
         {
-            rdr.GetTag("ALT.net", new ReaderFeedParameters { Direction = ItemDirection.Default, MaxItems = 5},
+            rdr.GetLabel("ALT.net", new ReaderFeedParameters { Direction = ItemDirection.Default, MaxItems = 5},
                             items =>
                                 {
                                     foreach (var item in items)

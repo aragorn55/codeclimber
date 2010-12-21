@@ -11,11 +11,11 @@ namespace CodeClimber.GoogleReaderConnector.Parameters
         public DateTime FromDate { get; set; }
         public int MaxItems { get; set; }
         public ItemDirection Direction { get; set; }
-        public IList<StateType> Exclude { get; set; }
+        public IList<ItemTag> Exclude { get; set; }
 
         public ReaderFeedParameters()
         {
-            Exclude = new List<StateType>();
+            Exclude = new List<ItemTag>();
 
         }
 
@@ -53,6 +53,6 @@ namespace CodeClimber.GoogleReaderConnector.Parameters
         Default,
         Descending,
         Ascending,
-	Magic
+	    Magic
     }
 }
