@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using CodeClimber.GoogleReaderConnector.Model;
 using CodeClimber.GoogleReaderConnector.Parameters;
 
@@ -105,6 +106,22 @@ namespace CodeClimber.GoogleReaderConnector
                 onError, onFinally);
         }
 
+        public void GetToken(Action<string> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            Uri requestUrl = _urlBuilder.GetTokenUri();
+            _httpService.PerformGetAsync(requestUrl,
+                             stream =>
+                             {
+                                 StreamReader r = new StreamReader(stream);
+                                 string token = r.ReadToEnd();
+
+                                 if (onSuccess != null)
+                                 {
+                                     onSuccess(token);
+                                 }
+                             },
+                onError, onFinally);
+        }
 
         public void Login(Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
