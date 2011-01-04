@@ -70,7 +70,7 @@ namespace GoogleReaderWp7TestApp
                 loggedin =>
                     {
                         if(loggedin)
-                            GetTag(rdr);
+                            GetLabel(rdr);
                         else
                         {
                             this.Items.Add(new ItemViewModel { LineOne = "noooo", LineTwo = "Login Failed", LineThree = "so not cool!!" });
@@ -88,9 +88,9 @@ namespace GoogleReaderWp7TestApp
 
         }
 
-        private void GetTag(ReaderServiceAsync rdr)
+        private void GetLabel(ReaderServiceAsync rdr)
         {
-            rdr.GetTag("ALT.net",
+            rdr.GetLabel("ALT.net",
                        new ReaderFeedParameters {Direction = ItemDirection.Descending, MaxItems = 20},
                        items =>
                            {

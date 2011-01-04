@@ -65,6 +65,8 @@
     <Compile Include="GoogleReaderFactory.cs" />
     <Compile Include="IClientLoginService.cs" />
     <Compile Include="IHttpService.cs" />
+    <Compile Include="ItemAction.cs" />
+    <Compile Include="ItemTag.cs" />
     <Compile Include="IUriBuilder.cs" />
     <Compile Include="JsonHelpers\DateTimeUtils.cs" />
     <Compile Include="JsonHelpers\ReflectionUtils.cs" />
@@ -80,6 +82,7 @@
     <Compile Include="Model\FriendList.cs" />
     <Compile Include="Model\SharingPerson.cs" />
     <Compile Include="Model\User.cs" />
+    <Compile Include="Parameters\EmptyReaderParameters.cs" />
     <Compile Include="Parameters\ReaderFeedParameters.cs" />
     <Compile Include="Parameters\ReaderFriendParameters.cs" />
     <Compile Include="Parameters\ReaderParametersBase.cs" />
@@ -90,7 +93,6 @@
     <Compile Include="Services\GoogleReaderClientLogin.cs" />
     <Compile Include="Services\GoogleReaderUrlBuilder.cs" />
     <Compile Include="Services\HttpService.cs" />
-    <Compile Include="StateType.cs" />
     <Compile Include="UrlType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
