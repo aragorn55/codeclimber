@@ -25,16 +25,16 @@ namespace CodeClimber.GoogleReaderConsole
 
             ReaderService rdr = new ReaderService(builder, service);
 
-            try
-            {
-                Console.WriteLine(" -----------Authentication ------------------");
-                bool login = loginService.Login();
-                if (!login)
-                    Console.WriteLine("Authentication failed, please check your username and password");
-            }
-            catch (NetworkConnectionException ex) { Console.WriteLine(ex.Message); }
-            catch (AuthTokenException ex) { Console.WriteLine("Error retrieving authorization token"); }
-            catch (GoogleResponseException ex) { Console.WriteLine(String.Format("There was a problem with the connection: {0}, {1}", ex.StatusCode, ex.Message)); }
+            //try
+            //{
+            //    Console.WriteLine(" -----------Authentication ------------------");
+            //    bool login = loginService.Login();
+            //    if (!login)
+            //        Console.WriteLine("Authentication failed, please check your username and password");
+            //}
+            //catch (NetworkConnectionException ex) { Console.WriteLine(ex.Message); }
+            //catch (AuthTokenException ex) { Console.WriteLine("Error retrieving authorization token"); }
+            //catch (GoogleResponseException ex) { Console.WriteLine(String.Format("There was a problem with the connection: {0}, {1}", ex.StatusCode, ex.Message)); }
 
             //bool doAgain;
             //do
@@ -42,17 +42,17 @@ namespace CodeClimber.GoogleReaderConsole
             //    doAgain = false;
             //    try
             //    {
-            string itemId = string.Empty;
-            string feedId = string.Empty;
-            Console.WriteLine(" ----------- Post list ------------------");
-            //foreach (FeedItem item in rdr.GetFeed("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction = ItemDirection.Descending, MaxItems = 20 }))
-            foreach (FeedItem item in rdr.GetTag(ItemTag.ReadingList, new ReaderFeedParameters() { Direction = ItemDirection.Default, MaxItems = 1, Exclude = {ItemTag.Read}}))
-            //foreach (FeedItem item in rdr.GetLabel("ALT.net", new ReaderParameters()))
-            {
-                itemId = item.Id;
-                feedId = item.Blog.Id;
-                Console.WriteLine(" - " + item.Blog.Title + " : " + item.Title + " by " + item.Author + "(" + item.Id +")");
-            }
+            //string itemId = string.Empty;
+            //string feedId = string.Empty;
+            //Console.WriteLine(" ----------- Post list ------------------");
+            ////foreach (FeedItem item in rdr.GetFeed("http://feeds.feedburner.com/codeclimber", new ReaderParameters() { Direction = ItemDirection.Descending, MaxItems = 20 }))
+            //foreach (FeedItem item in rdr.GetTag(ItemTag.ReadingList, new ReaderFeedParameters() { Direction = ItemDirection.Default, MaxItems = 1, Exclude = {ItemTag.Read}}))
+            ////foreach (FeedItem item in rdr.GetLabel("ALT.net", new ReaderParameters()))
+            //{
+            //    itemId = item.Id;
+            //    feedId = item.Blog.Id;
+            //    Console.WriteLine(" - " + item.Blog.Title + " : " + item.Title + " by " + item.Author + "(" + item.Id +")");
+            //}
 
             //        Console.WriteLine(" ----------- Friend Detail ------------------");
 
@@ -123,19 +123,31 @@ namespace CodeClimber.GoogleReaderConsole
 
             //} while (doAgain);
 
-            Console.WriteLine(" ----------- Setting Read ------------------");
+            //Console.WriteLine(" ----------- Setting Tag ------------------");
 
-            rdr.RemoveTagFromItem(feedId, itemId, ItemTag.Shared);
 
+            ////rdr.AddTagToItem(feedId, itemId, ItemTag.Like);
+            //rdr.MarkItemRead(feedId, itemId);
+
+            //Console.Write(" Tag set: [Press Enter]");
+            //Console.ReadLine();
+
+            //Console.WriteLine(" ----------- Removing Tag ------------------");
+            
+            ////rdr.RemoveTagFromItem(feedId, itemId, ItemTag.Like);
+            //rdr.KeepItemUnread(feedId, itemId);
+
+            //Console.Write(" Tag Removed: [Press Enter]");
+            //Console.ReadLine();
             
 
-            //ReaderServiceAsync rdrAsync = new ReaderServiceAsync(builder, service);
-            //////Console.WriteLine(" ----------- Post list Async------------------");
+            ReaderServiceAsync rdrAsync = new ReaderServiceAsync(builder, service);
+            Console.WriteLine(" ----------- Post list Async------------------");
 
-            //PerformLogin(rdrAsync, () => { TestGetTag(rdrAsync); });
+            PerformLogin(rdrAsync, () => TestGetTag(rdrAsync));
 
             ////TestGetFeed(rdr);
-            //TestGetTag(rdrAsync, loginService);
+            //TestGetLabel(rdrAsync, loginService);
 
             Console.ReadLine();
 
@@ -178,6 +190,7 @@ namespace CodeClimber.GoogleReaderConsole
                              new ReaderFeedParameters { Direction = ItemDirection.Descending, MaxItems = 20 },
                              items =>
                                  {
+
                                      foreach (var item in items)
                                      {
                                          Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " + item.Author);
@@ -201,7 +214,66 @@ namespace CodeClimber.GoogleReaderConsole
                             () => Console.WriteLine("Press [ENTER] to close"));
         }
 
+
         private static void TestGetTag(ReaderServiceAsync rdr)
+        {
+            rdr.GetTag(ItemTag.ReadingList, new ReaderFeedParameters { Direction = ItemDirection.Default, MaxItems = 1 },
+                            items =>
+                            {
+                                string itemId = string.Empty;
+                                string feedId = string.Empty;
+                                foreach (var item in items)
+                                {
+                                    itemId = item.Id;
+                                    feedId = item.Blog.Id;
+                                    Console.WriteLine(item.Blog.Title + " : " + item.Title + " by " + item.Author);
+                                }
+
+                                Console.WriteLine(" ----------- Setting Tag ------------------");
+                                rdr.AddTagToItem(feedId,itemId,ItemTag.Like,
+                                    added =>
+                                        {
+                                            if (added)
+                                            {
+                                                Console.Write(" Tag set: [Press Enter]");
+                                                //Console.ReadLine();
+
+                                                rdr.RemoveTagFromItem(feedId, itemId, ItemTag.Like,
+                                                    removed =>
+                                                        {
+                                                            if(removed)
+                                                            {
+                                                                Console.Write(" Tag Removed: [Press Enter]");
+                                                                Console.ReadLine();
+                                                            }
+                                                        }
+                                                    );
+                                            }
+                                        });
+
+                            },
+                            ex =>
+                            {
+                                if (ex is LoginFailedException)
+                                {
+                                    PerformLogin(rdr, () => TestGetLabel(rdr));
+                                }
+                                else if (ex is NetworkConnectionException)
+                                {
+                                    Console.WriteLine(ex.Message);
+                                }
+                                else if (ex is GoogleResponseException)
+                                {
+                                    Console.WriteLine(
+                                        String.Format("There was a problem with the connection: {0}, {1}",
+                                                      ((GoogleResponseException)ex).StatusCode, ex.Message));
+                                }
+                            },
+                            () => Console.WriteLine("Press [ENTER] to close"));
+        }
+
+
+        private static void TestGetLabel(ReaderServiceAsync rdr)
         {
             rdr.GetLabel("ALT.net", new ReaderFeedParameters { Direction = ItemDirection.Default, MaxItems = 5},
                             items =>
@@ -215,7 +287,7 @@ namespace CodeClimber.GoogleReaderConsole
                                 {
                                     if (ex is LoginFailedException)
                                     {
-                                        PerformLogin(rdr, () => TestGetTag(rdr));
+                                        PerformLogin(rdr, () => TestGetLabel(rdr));
                                     }
                                     else if (ex is NetworkConnectionException)
                                     {

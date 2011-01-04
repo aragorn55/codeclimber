@@ -70,8 +70,7 @@ namespace CodeClimber.GoogleReaderConnector
 
         public bool MarkItemRead(string feedId, string itemId)
         {
-            if (!EditItem(feedId, itemId, ItemTag.Read, ItemTag.KeptUnread, ItemAction.AddAndRemove)) return false;
-            return true;
+            return EditItem(feedId, itemId, ItemTag.Read, ItemTag.KeptUnread, ItemAction.AddAndRemove);
         }
 
         public bool AddTagToItem(string feedId, string itemId, ItemTag tag)

@@ -91,20 +91,64 @@ namespace CodeClimber.GoogleReaderConnector
                 onError, onFinally);
         }
 
-        private void ExecGetFeedAsync(Uri requestUrl, Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        public void KeepItemUnread(string feedId, string itemId, Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
-            _httpService.PerformGetAsync(requestUrl,
-                                         stream =>
-                                         {
-                                             Feed feed = ParseResultStream<Feed>(stream);
+            AddTagToItem(feedId, itemId, ItemTag.TrackingKeptUnread,
+                success =>
+                    {
+                        if(onSuccess!=null)
+                        {
+                            if (success)
+                                EditItem(feedId, itemId, ItemTag.KeptUnread, ItemTag.Read, ItemAction.AddAndRemove,
+                                         onSuccess, onError, onFinally);
+                            else
+                                onSuccess(false);
+                        }
 
-                                             if (onSuccess != null)
-                                             {
-                                                 onSuccess(feed.Items);
-                                             }
-                                         },
-                onError, onFinally);
+                    }
+                , onError, onFinally);
         }
+
+        public void MarkItemRead(string feedId, string itemId, Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            EditItem(feedId, itemId, ItemTag.Read, ItemTag.KeptUnread, ItemAction.AddAndRemove, onSuccess, onError, onFinally);
+        }
+
+        public void AddTagToItem(string feedId, string itemId, ItemTag tag, Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            EditItem(feedId, itemId, tag, ItemTag.None, ItemAction.Add, onSuccess, onError, onFinally);
+        }
+
+        public void RemoveTagFromItem(string feedId, string itemId, ItemTag tag, Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            EditItem(feedId, itemId, ItemTag.None, tag, ItemAction.Remove, onSuccess, onError, onFinally);
+        }
+
+        public void EditItem(string feedId, string itemId, ItemTag addTag, ItemTag removeTag, ItemAction action, Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            GetToken(
+                token =>
+                    {
+                        Uri requestUrl = _urlBuilder.BuildUri(UrlType.ItemEdit);
+                        Dictionary<string, string> postData = _urlBuilder.GetItemEditData(token, feedId, itemId, addTag, removeTag, action);
+                        _httpService.PerformPostAsync(requestUrl, postData,
+                            result =>
+                                {
+                                    if (onSuccess != null) 
+                                    {
+                                        if (result.Equals("OK"))
+                                            onSuccess(true);
+                                        else
+                                            onSuccess(false);
+                                    }
+                                },
+                                onError, onFinally);
+
+                    }
+                , onError, onFinally
+                );
+        }
+
 
         public void GetToken(Action<string> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
@@ -126,6 +170,21 @@ namespace CodeClimber.GoogleReaderConnector
         public void Login(Action<bool> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
         {
             _httpService.ClientLogin.LoginAsync(onSuccess,onError,onFinally);
+        }
+
+        private void ExecGetFeedAsync(Uri requestUrl, Action<IEnumerable<FeedItem>> onSuccess = null, Action<Exception> onError = null, Action onFinally = null)
+        {
+            _httpService.PerformGetAsync(requestUrl,
+                                         stream =>
+                                         {
+                                             Feed feed = ParseResultStream<Feed>(stream);
+
+                                             if (onSuccess != null)
+                                             {
+                                                 onSuccess(feed.Items);
+                                             }
+                                         },
+                onError, onFinally);
         }
     }
 }

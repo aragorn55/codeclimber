@@ -60,7 +60,6 @@ namespace CodeClimber.GoogleReaderConnector.Services
             }
             return result;
         }
-#endif
 
         private static void HandleConnectionError(WebException webex, bool throwWrongUsernameAndPassword=false)
         {
@@ -82,6 +81,9 @@ namespace CodeClimber.GoogleReaderConnector.Services
             if (faultResponse.StatusCode != HttpStatusCode.OK)
                 throw new GoogleResponseException(faultResponse.StatusCode, faultResponse.StatusDescription);
         }
+#endif
+
+
 
 
 
@@ -130,6 +132,7 @@ namespace CodeClimber.GoogleReaderConnector.Services
                         }
                     } 
                 };
+            webClient.Headers[HttpRequestHeader.Authorization] = "GoogleLogin auth=" + ClientLogin.Auth;
             webClient.UploadStringAsync(url, ConverToString(values));
         }
 
